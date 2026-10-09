@@ -34,7 +34,7 @@ async function recordEnquiryInGoogleSheet(env, fields, countryCode) {
   }
 
   const controller = new AbortController();
-  const timeout = setTimeout(() => controller.abort(), 8000);
+  const timeout = setTimeout(() => controller.abort(), 20000);
   try {
     const response = await fetch(webhookUrl, {
       method: "POST",
@@ -55,7 +55,18 @@ async function recordEnquiryInGoogleSheet(env, fields, countryCode) {
     try {
       result = await response.json();
     } catch {
-      console.error("Enquiry automation returned an unreadable response.", { status: response.status });
+      let responseHost = "unknown";
+      try {
+        responseHost = new URL(response.url).hostname;
+      } catch {
+        // Keep the diagnostic safe if the platform does not expose a valid final URL.
+      }
+      console.error("Enquiry automation returned an unreadable response.", {
+        status: response.status,
+        contentType: response.headers.get("Content-Type") || "unknown",
+        redirected: response.redirected,
+        responseHost,
+      });
       return { enabled: true, recorded: false };
     }
 

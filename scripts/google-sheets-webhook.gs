@@ -25,8 +25,10 @@ function safeCell(value) {
 }
 
 function prepareLeadSheet(sheet) {
+  let headersChanged = false;
   if (sheet.getLastRow() === 0) {
     sheet.getRange(1, 1, 1, LEAD_HEADERS.length).setValues([LEAD_HEADERS]);
+    headersChanged = true;
   } else {
     const lastColumn = Math.max(sheet.getLastColumn(), 1);
     const existingHeaders = sheet.getRange(1, 1, 1, lastColumn).getDisplayValues()[0]
@@ -34,15 +36,20 @@ function prepareLeadSheet(sheet) {
     LEAD_HEADERS.forEach((header) => {
       if (!existingHeaders.includes(header)) {
         existingHeaders.push(header);
+        headersChanged = true;
       }
     });
-    sheet.getRange(1, 1, 1, existingHeaders.length).setValues([existingHeaders]);
+    if (headersChanged) {
+      sheet.getRange(1, 1, 1, existingHeaders.length).setValues([existingHeaders]);
+    }
   }
 
   const headerMap = new Map(
     sheet.getRange(1, 1, 1, sheet.getLastColumn()).getDisplayValues()[0]
       .map((header, index) => [header.trim(), index + 1]),
   );
+  if (!headersChanged) return headerMap;
+
   const columnCount = sheet.getLastColumn();
   const maxRows = sheet.getMaxRows();
   const statusRange = sheet.getRange(2, headerMap.get("status"), maxRows - 1, 1);
