@@ -14,8 +14,8 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 - `styles.css` — shared responsive design system
 - `script.js` — mobile navigation, reveal-on-scroll, year and form validation/submission
 - `contact-form.js` — enquiry submission and international phone country-code picker; country flags load as Twemoji SVGs from cdnjs
-- `functions/api/enquiry.js` — server-side Web3Forms delivery and optional authenticated n8n lead recording
-- `workflows/n8n-enquiry-to-google-sheets.json` — importable n8n workflow for adding enquiries to Google Sheets
+- `functions/api/enquiry.js` — server-side Web3Forms delivery and optional authenticated Google Sheets lead recording
+- `scripts/google-sheets-webhook.gs` — Google Apps Script endpoint that safely records leads in Google Sheets
 
 ## Before publishing
 1. Confirm prices, timelines, included deliverables, revision limits and care plan terms.
@@ -26,19 +26,22 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 6. Add favicon/social preview assets, update absolute social-image metadata, and test all pages on mobile and desktop.
 7. Deploy as a preview first and test every navigation link and enquiry flow before pointing your main domain at it.
 
-## Optional: record enquiries in Google Sheets with n8n
+## Optional: record enquiries in Google Sheets at no hosting cost
 
-The website continues to send enquiries through Web3Forms. Once configured, the Cloudflare Pages Function also sends each enquiry to n8n, which appends it to a private Google Sheet. The existing Web3Forms email remains the email notification; n8n only records the lead. If Google Sheets recording fails, the email remains successful and the form clearly reports that the lead tracker could not be updated.
+This setup does not require n8n or a separate hosting service. It uses Google Sheets and a small Google Apps Script web app. Google account quotas and product terms apply. The website keeps using Web3Forms for enquiry email; the Cloudflare Pages Function separately sends a copy to your script for the private lead sheet. If recording fails, the form reports that the email was accepted but the lead tracker could not be updated.
 
-1. Create a private Google Sheet named `NEARLY Leads` with a tab named `Leads`. Set the first row to these exact headers: `received_at`, `name`, `email`, `phone`, `business`, `package`, `details`, `status`. Restrict access to people who need to see enquiries.
-2. In n8n, import `workflows/n8n-enquiry-to-google-sheets.json`.
-3. Create an **HTTP Header Auth** credential for the Webhook node. Set the header name to `X-Nearly-Webhook-Token` and choose a long, random value. Keep that value private.
-4. Create and select a Google Sheets OAuth2 credential on **Append Lead to Sheet**, then select the `NEARLY Leads` document and its `Leads` tab. Ensure the columns map to the header names above.
-5. Save and activate the workflow. Copy its **Production URL** from the Webhook node (not the Test URL). The workflow authenticates requests, writes the row, and only then confirms `{"success":true,"recorded":true}`.
-6. In the Cloudflare Pages project's **Settings → Variables and Secrets** for **Production**, add encrypted secrets named `N8N_WEBHOOK_URL` (the n8n Production URL) and `N8N_WEBHOOK_TOKEN` (the same random value used by the n8n credential). Never place either value in this repository or the browser.
-7. Redeploy the Pages project. Update the site's privacy notice to cover enquiry storage in Google Sheets, the services processing it, and your retention practices. Submit a clearly marked test enquiry and verify both the existing email and the new row in the Sheet before relying on the workflow.
+1. In Google Sheets, create a private spreadsheet named `NEARLY Leads` and add a tab named `Leads`. Keep access restricted to you and anyone who needs the enquiries.
+2. Open the spreadsheet ID from its URL: the long text between `/d/` and `/edit`. Keep this ID handy.
+3. Open [script.google.com](https://script.google.com/), create a new project, and paste the contents of `scripts/google-sheets-webhook.gs` into `Code.gs`. Save the project.
+4. In Apps Script, open **Project Settings** and add these **Script Properties**:
+   - `SPREADSHEET_ID` — the spreadsheet ID from step 2.
+   - `WEBHOOK_TOKEN` — a new, private random secret of at least 32 characters. Do not share or commit it.
+5. Choose **Deploy → New deployment → Web app**. Set **Execute as** to your Google account and **Who has access** to **Anyone**, then deploy and approve Google Sheets access. Anyone can reach this public endpoint, but it only records a lead when the private token matches.
+6. Copy the deployed web app URL. It should start with `https://script.google.com/macros/s/` and end with `/exec`.
+7. In the Cloudflare Pages project's **Settings → Variables and Secrets** for **Production**, add encrypted secrets named `GOOGLE_SHEETS_WEBHOOK_URL` (the Apps Script URL) and `GOOGLE_SHEETS_WEBHOOK_TOKEN` (the exact same random secret from step 4). Do not put either secret into website files or chat.
+8. Redeploy the Pages project. Update the site's privacy notice to cover lead storage in Google Sheets, the services processing it, and your retention practices. Submit a clearly marked test enquiry and confirm both the existing email and the row in the `Leads` tab before relying on this workflow.
 
-Until both Cloudflare secrets are set, n8n recording is disabled and the existing email flow is unchanged. If n8n or Google Sheets is unavailable after activation, the enquiry email is still sent; the site reports that lead recording could not be confirmed, and Cloudflare logs a failure without recording enquiry contents.
+Until both Cloudflare secrets are set, sheet recording is disabled and the existing email flow is unchanged. If Google Sheets recording fails after activation, the email is still sent; the site reports that sheet recording was not confirmed. Apps Script logs failures without logging the enquiry contents.
 
 ## Run locally
 Open `index.html` in a browser to preview the static pages. The enquiry endpoint requires Cloudflare Pages Functions and the `WEB3FORMS_ACCESS_KEY` secret, so the complete form flow must be tested on Cloudflare Pages or with Wrangler Pages development. Use dummy details for tests.

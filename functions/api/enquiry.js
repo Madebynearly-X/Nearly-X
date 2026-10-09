@@ -13,22 +13,23 @@ function readField(data, name, maxLength) {
   return value.trim().slice(0, maxLength);
 }
 
-async function recordEnquiryInN8n(env, fields, countryCode) {
-  if (!env.N8N_WEBHOOK_URL && !env.N8N_WEBHOOK_TOKEN) return { enabled: false };
-  if (!env.N8N_WEBHOOK_URL || !env.N8N_WEBHOOK_TOKEN) {
-    console.error("Enquiry automation is not configured: both N8N_WEBHOOK_URL and N8N_WEBHOOK_TOKEN are required.");
+async function recordEnquiryInGoogleSheet(env, fields, countryCode) {
+  if (!env.GOOGLE_SHEETS_WEBHOOK_URL && !env.GOOGLE_SHEETS_WEBHOOK_TOKEN) return { enabled: false };
+  if (!env.GOOGLE_SHEETS_WEBHOOK_URL || !env.GOOGLE_SHEETS_WEBHOOK_TOKEN) {
+    console.error("Google Sheets lead recording is not configured: both webhook secrets are required.");
     return { enabled: true, recorded: false };
   }
 
   let webhookUrl;
   try {
-    webhookUrl = new URL(env.N8N_WEBHOOK_URL);
+    webhookUrl = new URL(env.GOOGLE_SHEETS_WEBHOOK_URL);
   } catch {
-    console.error("Enquiry automation is not configured: N8N_WEBHOOK_URL is not a valid URL.");
+    console.error("Google Sheets lead recording is not configured: webhook URL is invalid.");
     return { enabled: true, recorded: false };
   }
-  if (webhookUrl.protocol !== "https:" || webhookUrl.username || webhookUrl.password) {
-    console.error("Enquiry automation is not configured: N8N_WEBHOOK_URL must be an HTTPS URL without embedded credentials.");
+  if (webhookUrl.protocol !== "https:" || webhookUrl.hostname !== "script.google.com"
+    || webhookUrl.username || webhookUrl.password) {
+    console.error("Google Sheets lead recording is not configured: webhook URL must be a Google Apps Script HTTPS URL.");
     return { enabled: true, recorded: false };
   }
 
@@ -39,9 +40,9 @@ async function recordEnquiryInN8n(env, fields, countryCode) {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "X-Nearly-Webhook-Token": env.N8N_WEBHOOK_TOKEN,
       },
       body: JSON.stringify({
+        token: env.GOOGLE_SHEETS_WEBHOOK_TOKEN,
         ...fields,
         phone: fields.phone ? `${countryCode} ${fields.phone}` : "",
         received_at: new Date().toISOString(),
@@ -60,7 +61,7 @@ async function recordEnquiryInN8n(env, fields, countryCode) {
 
     if (!response.ok || !result || typeof result !== "object"
       || result.success !== true || result.recorded !== true) {
-      console.error("Enquiry automation did not confirm lead recording.", {
+      console.error("Google Sheets webhook did not confirm lead recording.", {
         status: response.status,
         message: typeof result.message === "string" ? result.message : "No recording confirmation",
       });
@@ -69,7 +70,7 @@ async function recordEnquiryInN8n(env, fields, countryCode) {
 
     return { enabled: true, recorded: true };
   } catch (error) {
-    console.error("Enquiry automation request failed.", error);
+    console.error("Google Sheets webhook request failed.", error);
     return { enabled: true, recorded: false };
   } finally {
     clearTimeout(timeout);
@@ -175,8 +176,8 @@ export async function onRequestPost({ request, env }) {
     return json({ success: false, message: "We couldn't send your enquiry just now. Please try again or email us directly." }, 502);
   }
 
-  const automation = await recordEnquiryInN8n(env, fields, countryCode);
-  if (automation.enabled && !automation.recorded) {
+  const sheet = await recordEnquiryInGoogleSheet(env, fields, countryCode);
+  if (sheet.enabled && !sheet.recorded) {
     return json({
       success: true,
       warning: "Your enquiry was accepted for email delivery, but we couldn't confirm that it was added to our lead tracker.",
