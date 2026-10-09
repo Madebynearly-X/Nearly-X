@@ -17,11 +17,11 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 ## Before publishing
 1. Confirm prices, timelines, included deliverables, revision limits and care plan terms.
 2. Confirm public contact details.
-3. The enquiry form currently posts to FormSubmit at `madebynearly@gmail.com`. On the first real submission, FormSubmit may send an activation email to that inbox; open it and confirm the address before expecting enquiry notifications. Check Spam if it does not appear. Form submissions are sent to FormSubmit even while testing locally; do not use real customer details for test submissions.
+3. The enquiry form uses a Cloudflare Pages Function at `/api/enquiry` to send enquiries through Web3Forms. Create a Web3Forms access key for `madebynearly@gmail.com`, then add it to the Cloudflare Pages project's **Settings → Variables and Secrets** as the encrypted secret `WEB3FORMS_ACCESS_KEY`. Never commit the key. Redeploy after configuring the secret. The form reports success only when Web3Forms accepts the submission; confirm delivery in Gmail and check Spam during the first live test.
 4. Add a real privacy notice that accurately describes your data handling.
 5. Replace illustrative mockups with real work as you have permission to publish it. Concept work should remain clearly labelled.
 6. Add favicon/social preview assets, update absolute social-image metadata, and test all pages on mobile and desktop.
 7. Deploy as a preview first and test every navigation link and enquiry flow before pointing your main domain at it.
 
 ## Run locally
-Open `index.html` in a browser. The enquiry form can be tested locally, but it sends submitted data to FormSubmit and requires an internet connection. Do not submit real customer details during testing.
+Open `index.html` in a browser to preview the static pages. The enquiry endpoint requires Cloudflare Pages Functions and the `WEB3FORMS_ACCESS_KEY` secret, so the complete form flow must be tested on Cloudflare Pages or with Wrangler Pages development. Use dummy details for tests.
