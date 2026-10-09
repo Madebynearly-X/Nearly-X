@@ -1,0 +1,200 @@
+{
+  "name": "NEARLY — Website Enquiry to Google Sheets",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "nearly-enquiry",
+        "authentication": "headerAuth",
+        "responseMode": "responseNode",
+        "options": {}
+      },
+      "id": "6be9b49b-674f-42d4-aeac-a8e412fa2132",
+      "name": "Receive Enquiry",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2.1,
+      "position": [
+        240,
+        300
+      ],
+      "webhookId": "788fbd34-9a15-4cb4-ac00-0ef4e1f2a33c",
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "CONFIGURE_AFTER_IMPORT",
+          "name": "NEARLY Enquiry Webhook Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "operation": "append",
+        "documentId": {
+          "__rl": true,
+          "value": "REPLACE_WITH_GOOGLE_SHEET_ID",
+          "mode": "id"
+        },
+        "sheetName": {
+          "__rl": true,
+          "value": "Leads",
+          "mode": "name"
+        },
+        "columns": {
+          "mappingMode": "defineBelow",
+          "value": {
+            "received_at": "={{ $json.body.received_at }}",
+            "name": "={{ $json.body.name }}",
+            "email": "={{ $json.body.email }}",
+            "phone": "={{ $json.body.phone }}",
+            "business": "={{ $json.body.business }}",
+            "package": "={{ $json.body.package }}",
+            "details": "={{ $json.body.details }}",
+            "status": "={{ $json.body.status }}"
+          },
+          "matchingColumns": [],
+          "schema": [
+            {
+              "id": "received_at",
+              "displayName": "received_at",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "name",
+              "displayName": "name",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "email",
+              "displayName": "email",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "phone",
+              "displayName": "phone",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "business",
+              "displayName": "business",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "package",
+              "displayName": "package",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "details",
+              "displayName": "details",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            },
+            {
+              "id": "status",
+              "displayName": "status",
+              "required": false,
+              "defaultMatch": false,
+              "display": true,
+              "type": "string",
+              "canBeUsedToMatch": true
+            }
+          ],
+          "attemptToConvertTypes": false,
+          "convertFieldsToString": false
+        },
+        "options": {}
+      },
+      "id": "d5377f22-5dbb-4235-8395-615f20c43e03",
+      "name": "Append Lead to Sheet",
+      "type": "n8n-nodes-base.googleSheets",
+      "typeVersion": 4.5,
+      "position": [
+        500,
+        300
+      ],
+      "credentials": {
+        "googleSheetsOAuth2Api": {
+          "id": "CONFIGURE_AFTER_IMPORT",
+          "name": "NEARLY Google Sheets"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "respondWith": "json",
+        "responseBody": "={{ JSON.stringify({ success: true, recorded: true }) }}",
+        "options": {
+          "responseCode": 200
+        }
+      },
+      "id": "0f3eddda-9a50-4333-a48d-229164bdcf1f",
+      "name": "Confirm Lead Recorded",
+      "type": "n8n-nodes-base.respondToWebhook",
+      "typeVersion": 1.1,
+      "position": [
+        760,
+        300
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Receive Enquiry": {
+      "main": [
+        [
+          {
+            "node": "Append Lead to Sheet",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Append Lead to Sheet": {
+      "main": [
+        [
+          {
+            "node": "Confirm Lead Recorded",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  },
+  "versionId": "34f3dd56-26a6-4d21-98d2-eaa7445cad61",
+  "meta": {
+    "templateCredsSetupCompleted": false
+  },
+  "tags": []
+}

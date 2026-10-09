@@ -269,10 +269,20 @@
 
       form.reset();
       if (success) {
+        const successMessage = success.querySelector("p");
+        if (successMessage) {
+          successMessage.textContent = result.warning
+            ? result.warning
+            : "Your enquiry has been submitted. We'll be in touch soon.";
+        }
         success.hidden = false;
         success.focus();
       }
-      if (live) live.textContent = "Your enquiry was accepted for delivery.";
+      if (live) {
+        live.textContent = result.warning
+          ? result.warning
+          : "Your enquiry was accepted for delivery.";
+      }
     } catch (error) {
       const message = error instanceof Error && error.name === "Error"
         ? error.message

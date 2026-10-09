@@ -13,6 +13,69 @@ function readField(data, name, maxLength) {
   return value.trim().slice(0, maxLength);
 }
 
+async function recordEnquiryInN8n(env, fields, countryCode) {
+  if (!env.N8N_WEBHOOK_URL && !env.N8N_WEBHOOK_TOKEN) return { enabled: false };
+  if (!env.N8N_WEBHOOK_URL || !env.N8N_WEBHOOK_TOKEN) {
+    console.error("Enquiry automation is not configured: both N8N_WEBHOOK_URL and N8N_WEBHOOK_TOKEN are required.");
+    return { enabled: true, recorded: false };
+  }
+
+  let webhookUrl;
+  try {
+    webhookUrl = new URL(env.N8N_WEBHOOK_URL);
+  } catch {
+    console.error("Enquiry automation is not configured: N8N_WEBHOOK_URL is not a valid URL.");
+    return { enabled: true, recorded: false };
+  }
+  if (webhookUrl.protocol !== "https:" || webhookUrl.username || webhookUrl.password) {
+    console.error("Enquiry automation is not configured: N8N_WEBHOOK_URL must be an HTTPS URL without embedded credentials.");
+    return { enabled: true, recorded: false };
+  }
+
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
+  try {
+    const response = await fetch(webhookUrl, {
+      method: "POST",
+      headers: {
+        "Content-Type": "application/json",
+        "X-Nearly-Webhook-Token": env.N8N_WEBHOOK_TOKEN,
+      },
+      body: JSON.stringify({
+        ...fields,
+        phone: fields.phone ? `${countryCode} ${fields.phone}` : "",
+        received_at: new Date().toISOString(),
+        status: "New",
+      }),
+      signal: controller.signal,
+    });
+
+    let result;
+    try {
+      result = await response.json();
+    } catch {
+      console.error("Enquiry automation returned an unreadable response.", { status: response.status });
+      return { enabled: true, recorded: false };
+    }
+
+    if (!response.ok || !result || typeof result !== "object"
+      || result.success !== true || result.recorded !== true) {
+      console.error("Enquiry automation did not confirm lead recording.", {
+        status: response.status,
+        message: typeof result.message === "string" ? result.message : "No recording confirmation",
+      });
+      return { enabled: true, recorded: false };
+    }
+
+    return { enabled: true, recorded: true };
+  } catch (error) {
+    console.error("Enquiry automation request failed.", error);
+    return { enabled: true, recorded: false };
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export async function onRequestPost({ request, env }) {
   const origin = request.headers.get("Origin");
   if (origin && origin !== new URL(request.url).origin) {
@@ -110,6 +173,14 @@ export async function onRequestPost({ request, env }) {
       message: typeof result.message === "string" ? result.message : "Unknown provider error",
     });
     return json({ success: false, message: "We couldn't send your enquiry just now. Please try again or email us directly." }, 502);
+  }
+
+  const automation = await recordEnquiryInN8n(env, fields, countryCode);
+  if (automation.enabled && !automation.recorded) {
+    return json({
+      success: true,
+      warning: "Your enquiry was accepted for email delivery, but we couldn't confirm that it was added to our lead tracker.",
+    });
   }
 
   return json({ success: true });
