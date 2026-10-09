@@ -87,7 +87,7 @@
     countryCode.value = "+27";
 
     phoneGroup.className = "phone-entry";
-    phone.closest(".field").classList.add("field--full");
+    phone.closest(".field").classList.add("phone-field");
     phone.parentNode.insertBefore(phoneGroup, phone);
     phoneGroup.append(countryCode, phone);
     phone.setAttribute("autocomplete", "tel-national");
