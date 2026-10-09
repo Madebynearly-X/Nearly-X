@@ -4,6 +4,7 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 
 ## Pages
 - `index.html` — studio home
+- `concept-demos.html` — interactive sample websites with locally bundled stock photography
 - `landing-pages.html` — focused landing page service
 - `business-websites.html` — starter and business websites
 - `website-care.html` — maintenance service
@@ -13,6 +14,8 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 
 ## Files
 - `styles.css` — shared responsive design system
+- `concept-demos.css` and `concept-demos.js` — scoped styling and hash-based navigation for the sample websites
+- `assets/demo-home-services.jpg` and `assets/demo-fitness-studio.jpg` — Unsplash stock photos used in the illustrative concepts
 - `_headers` — Cloudflare Pages security headers and Content Security Policy
 - `script.js` — mobile navigation, reveal-on-scroll, year and form validation/submission
 - `contact-form.js` — enquiry submission and international phone country-code picker; country flags load as Twemoji SVGs from cdnjs
@@ -22,11 +25,12 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 ## Before publishing
 1. Confirm prices, timelines, included deliverables, revision limits and care plan terms.
 2. Confirm public contact details.
-3. The enquiry form uses a Cloudflare Pages Function at `/api/enquiry` to send enquiries through Web3Forms. Create a Web3Forms access key for `madebynearly@gmail.com`, then add it to the Cloudflare Pages project's **Settings → Variables and Secrets** as the encrypted secret `WEB3FORMS_ACCESS_KEY`. Never commit the key. Redeploy after configuring the secret. The form reports success only when Web3Forms accepts the submission; confirm delivery in Gmail and check Spam during the first live test.
+3. The enquiry form uses a Cloudflare Pages Function at `/api/enquiry` to send enquiries through Web3Forms. Create a Web3Forms access key for `madebynearly@gmail.com`, then add it to the Cloudflare Pages project's **Settings → Variables and Secrets** as the encrypted secret `WEB3FORMS_ACCESS_KEY`. Never commit the key. Redeploy after configuring the secret. The form reports success only when Web3Forms accepts the submission; confirm delivery in Gmail and check Spam during the first live test. To email an enquiry copy to the person who submitted it, configure and test Web3Forms' autoresponder in its dashboard; the provider documents this as a Pro/Agency feature that only works on production websites.
 4. Keep `privacy.html` accurate as your data handling, service providers, and retention practices change.
 5. Replace illustrative mockups with real work as you have permission to publish it. Concept work should remain clearly labelled.
-6. Add favicon/social preview assets, update absolute social-image metadata, and test all pages on mobile and desktop.
-7. Deploy as a preview first and test every navigation link and enquiry flow before pointing your main domain at it.
+6. Choose and connect a custom domain and matching business email. Update the canonical and Open Graph URLs from `nearly-x.pages.dev` on all indexable pages, and add the custom hostname to the Turnstile widget before launch.
+7. Create and add an Open Graph preview image, then test the favicon and page previews on social platforms.
+8. Deploy as a preview first and test every navigation link and enquiry flow on mobile and desktop before pointing your main domain at it.
 
 ## Enquiry spam protection
 

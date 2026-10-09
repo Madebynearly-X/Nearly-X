@@ -283,7 +283,7 @@
         if (successMessage) {
           successMessage.textContent = result.warning
             ? result.warning
-            : "Your enquiry has been submitted. We'll be in touch soon.";
+            : "Your enquiry has been received. We'll reply by email within one working day. If you don't see our reply, please check your spam folder.";
         }
         success.hidden = false;
         success.focus();
@@ -291,7 +291,7 @@
       if (live) {
         live.textContent = result.warning
           ? result.warning
-          : "Your enquiry was accepted for delivery.";
+          : "Your enquiry was received. We'll reply by email within one working day. Check your spam folder if you don't see our reply.";
       }
     } catch (error) {
       const message = error instanceof Error && error.name === "Error"
