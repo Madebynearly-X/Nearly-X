@@ -9,6 +9,7 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 - `website-care.html` — maintenance service
 - `contact.html` — enquiry form, with service selection prefilled from page links and a searchable international calling-code picker
 - `thanks.html` — post-submission confirmation page
+- `privacy.html` — plain-language notice for website enquiries and lead handling
 
 ## Files
 - `styles.css` — shared responsive design system
@@ -21,7 +22,7 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 1. Confirm prices, timelines, included deliverables, revision limits and care plan terms.
 2. Confirm public contact details.
 3. The enquiry form uses a Cloudflare Pages Function at `/api/enquiry` to send enquiries through Web3Forms. Create a Web3Forms access key for `madebynearly@gmail.com`, then add it to the Cloudflare Pages project's **Settings → Variables and Secrets** as the encrypted secret `WEB3FORMS_ACCESS_KEY`. Never commit the key. Redeploy after configuring the secret. The form reports success only when Web3Forms accepts the submission; confirm delivery in Gmail and check Spam during the first live test.
-4. Add a real privacy notice that accurately describes your data handling.
+4. Keep `privacy.html` accurate as your data handling, service providers, and retention practices change.
 5. Replace illustrative mockups with real work as you have permission to publish it. Concept work should remain clearly labelled.
 6. Add favicon/social preview assets, update absolute social-image metadata, and test all pages on mobile and desktop.
 7. Deploy as a preview first and test every navigation link and enquiry flow before pointing your main domain at it.
@@ -39,7 +40,7 @@ This setup does not require n8n or a separate hosting service. It uses Google Sh
 5. Choose **Deploy → New deployment → Web app**. Set **Execute as** to your Google account and **Who has access** to **Anyone**, then deploy and approve Google Sheets access. Anyone can reach this public endpoint, but it only records a lead when the private token matches.
 6. Copy the deployed web app URL. It should start with `https://script.google.com/macros/s/` and end with `/exec`.
 7. In the Cloudflare Pages project's **Settings → Variables and Secrets** for **Production**, add encrypted secrets named `GOOGLE_SHEETS_WEBHOOK_URL` (the Apps Script URL) and `GOOGLE_SHEETS_WEBHOOK_TOKEN` (the exact same random secret from step 4). Do not put either secret into website files or chat.
-8. Redeploy the Pages project. Update the site's privacy notice to cover lead storage in Google Sheets, the services processing it, and your retention practices. Submit a clearly marked test enquiry and confirm both the existing email and the row in the `Leads` tab before relying on this workflow.
+8. Redeploy the Pages project. The site's `privacy.html` notice describes lead storage in Google Sheets, the services processing it, and the 12-month retention period for enquiries that do not become client relationships. Review it if these practices change. Submit a clearly marked test enquiry and confirm both the existing email and the row in the `Leads` tab before relying on this workflow.
 
 Until both Cloudflare secrets are set, sheet recording is disabled and the existing email flow is unchanged. If Google Sheets recording fails after activation, the email is still sent; the site reports that sheet recording was not confirmed. Apps Script logs failures without logging the enquiry contents.
 
