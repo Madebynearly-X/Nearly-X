@@ -63,7 +63,7 @@ async function recordEnquiryInGoogleSheet(env, fields, countryCode) {
       || result.success !== true || result.recorded !== true) {
       console.error("Google Sheets webhook did not confirm lead recording.", {
         status: response.status,
-        message: typeof result.message === "string" ? result.message : "No recording confirmation",
+        message: result && typeof result.message === "string" ? result.message : "No recording confirmation",
       });
       return { enabled: true, recorded: false };
     }
@@ -77,10 +77,52 @@ async function recordEnquiryInGoogleSheet(env, fields, countryCode) {
   }
 }
 
+async function verifyTurnstile(token, secret, expectedHostname) {
+  const controller = new AbortController();
+  const timeout = setTimeout(() => controller.abort(), 8000);
+  try {
+    const response = await fetch("https://challenges.cloudflare.com/turnstile/v0/siteverify", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ secret, response: token }),
+      signal: controller.signal,
+    });
+
+    let result;
+    try {
+      result = await response.json();
+    } catch (error) {
+      console.error("Turnstile returned an unreadable response.", error);
+      return null;
+    }
+
+    if (!response.ok || !result || typeof result !== "object" || Array.isArray(result)) {
+      console.error("Turnstile verification service returned an invalid response.", {
+        status: response.status,
+      });
+      return null;
+    }
+
+    return result.success === true
+      && result.hostname === expectedHostname
+      && result.action === "enquiry";
+  } catch (error) {
+    console.error("Turnstile verification request failed.", error);
+    return null;
+  } finally {
+    clearTimeout(timeout);
+  }
+}
+
 export async function onRequestPost({ request, env }) {
   const origin = request.headers.get("Origin");
-  if (origin && origin !== new URL(request.url).origin) {
+  if (!origin || origin !== new URL(request.url).origin) {
     return json({ success: false, message: "This form request could not be verified." }, 403);
+  }
+
+  const contentType = request.headers.get("Content-Type") || "";
+  if (contentType.split(";")[0].trim().toLowerCase() !== "application/json") {
+    return json({ success: false, message: "Please submit the enquiry form using the website." }, 415);
   }
 
   const contentLength = Number(request.headers.get("Content-Length") || 0);
@@ -136,6 +178,28 @@ export async function onRequestPost({ request, env }) {
     return json({ success: false, message: "Please select a valid country calling code." }, 400);
   }
 
+  if (!env.TURNSTILE_SECRET_KEY) {
+    console.error("Enquiry form is not configured: TURNSTILE_SECRET_KEY is missing.");
+    return json({ success: false, message: "The security check is temporarily unavailable. Please email us directly." }, 503);
+  }
+
+  const turnstileToken = readField(data, "cf-turnstile-response", 2048);
+  if (!turnstileToken) {
+    return json({ success: false, message: "Please complete the security check and try again." }, 400);
+  }
+
+  const verification = await verifyTurnstile(
+    turnstileToken,
+    env.TURNSTILE_SECRET_KEY,
+    new URL(request.url).hostname,
+  );
+  if (verification === null) {
+    return json({ success: false, message: "The security check is temporarily unavailable. Please try again shortly." }, 503);
+  }
+  if (!verification) {
+    return json({ success: false, message: "The security check failed or expired. Please retry it and submit again." }, 403);
+  }
+
   if (!env.WEB3FORMS_ACCESS_KEY) {
     console.error("Enquiry form is not configured: WEB3FORMS_ACCESS_KEY is missing.");
     return json({ success: false, message: "The enquiry form is temporarily unavailable. Please email us directly." }, 503);
@@ -168,7 +232,7 @@ export async function onRequestPost({ request, env }) {
     return json({ success: false, message: "We couldn't confirm delivery. Please try again or email us directly." }, 502);
   }
 
-  if (!providerResponse.ok || result.success !== true) {
+  if (!providerResponse.ok || !result || typeof result !== "object" || result.success !== true) {
     console.error("Web3Forms rejected an enquiry.", {
       status: providerResponse.status,
       message: typeof result.message === "string" ? result.message : "Unknown provider error",

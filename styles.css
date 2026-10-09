@@ -53,3 +53,4 @@
 @media(max-width:420px){.phone-entry{grid-template-columns:minmax(138px,.85fr) minmax(0,1.15fr);gap:8px}.phone-entry input,.country-picker__trigger{padding-inline:11px}.country-picker__trigger{font-size:13px}}
 
 .country-picker__trigger:focus-visible,.phone-entry input:focus-visible,.country-picker__option:focus-visible{outline:3px solid #005fcc;outline-offset:2px;box-shadow:none}
+.turnstile-wrap{display:flex;justify-content:center;min-height:65px;margin-top:18px}

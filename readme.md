@@ -13,6 +13,7 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 
 ## Files
 - `styles.css` — shared responsive design system
+- `_headers` — Cloudflare Pages security headers and Content Security Policy
 - `script.js` — mobile navigation, reveal-on-scroll, year and form validation/submission
 - `contact-form.js` — enquiry submission and international phone country-code picker; country flags load as Twemoji SVGs from cdnjs
 - `functions/api/enquiry.js` — server-side Web3Forms delivery and optional authenticated Google Sheets lead recording
@@ -26,6 +27,23 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 5. Replace illustrative mockups with real work as you have permission to publish it. Concept work should remain clearly labelled.
 6. Add favicon/social preview assets, update absolute social-image metadata, and test all pages on mobile and desktop.
 7. Deploy as a preview first and test every navigation link and enquiry flow before pointing your main domain at it.
+
+## Enquiry spam protection
+
+The contact form includes a honeypot field and Cloudflare Turnstile. Turnstile must be validated server-side; the Pages Function does this through Cloudflare Siteverify and checks the configured hostname and `enquiry` action before sending anything to email or Sheets.
+
+Before deploying the Turnstile integration:
+1. Create a Turnstile widget for `nearly-x.pages.dev` and any custom domain you use. Use Managed mode and do not enable pre-clearance.
+2. Set the widget's **site key** on the `cf-turnstile` element in `contact.html`. This key is public and belongs in the page; the **secret key must never go into source code or chat**.
+3. Add the widget's secret key to the Cloudflare Pages project's **Settings → Variables and Secrets** for Production as the encrypted secret `TURNSTILE_SECRET_KEY`.
+4. Only publish after both keys are configured. If either key is missing or does not match, form submissions will be rejected rather than silently bypassing verification.
+5. Submit a real test enquiry and verify it reaches both email and the Leads sheet. Expired or reused Turnstile tokens are rejected; visitors can retry the widget and submit again.
+
+Turnstile is provided at no cost by Cloudflare under its current service terms. It sends technical browser and network signals to Cloudflare for bot detection; see `privacy.html`. Keep the privacy notice accurate if you change providers or widget settings.
+
+## Security and cookies
+
+The site does not use advertising or analytics cookies or a cookie-preference store, so it does not need a consent banner for those purposes. Turnstile may use strictly necessary security cookies or similar signals; these are described in the privacy notice. `_headers` applies a restrictive Content Security Policy, clickjacking protection, MIME sniffing protection, a referrer policy, a permissions policy, and HSTS on Cloudflare Pages. Review the CSP whenever adding scripts, fonts, images, or other third-party services.
 
 ## Optional: record enquiries in Google Sheets at no hosting cost
 
