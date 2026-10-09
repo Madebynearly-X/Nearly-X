@@ -7,12 +7,13 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 - `landing-pages.html` — focused landing page service
 - `business-websites.html` — starter and business websites
 - `website-care.html` — maintenance service
-- `contact.html` — enquiry form, with service selection prefilled from page links
+- `contact.html` — enquiry form, with service selection prefilled from page links and an international calling-code selector
 - `thanks.html` — post-submission confirmation page
 
 ## Files
 - `styles.css` — shared responsive design system
 - `script.js` — mobile navigation, reveal-on-scroll, year and form validation/submission
+- `contact-form.js` — enquiry submission and international phone country-code selector
 
 ## Before publishing
 1. Confirm prices, timelines, included deliverables, revision limits and care plan terms.

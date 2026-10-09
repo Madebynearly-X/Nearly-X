@@ -58,6 +58,7 @@ export async function onRequestPost({ request, env }) {
     package: readField(data, "package", 80),
     details: readField(data, "details", 5000),
   };
+  const countryCode = readField(data, "country_code", 5);
 
   if (!fields.name || !fields.email || !fields.details) {
     return json({ success: false, message: "Please complete the required fields." }, 400);
@@ -65,6 +66,10 @@ export async function onRequestPost({ request, env }) {
 
   if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(fields.email)) {
     return json({ success: false, message: "Please enter a valid email address." }, 400);
+  }
+
+  if (fields.phone && !/^\+\d{1,3}$/.test(countryCode)) {
+    return json({ success: false, message: "Please select a valid country calling code." }, 400);
   }
 
   if (!env.WEB3FORMS_ACCESS_KEY) {
@@ -83,6 +88,7 @@ export async function onRequestPost({ request, env }) {
         from_name: "NEARLY Studio website",
         replyto: fields.email,
         ...fields,
+        phone: fields.phone ? `${countryCode} ${fields.phone}` : "",
       }),
     });
   } catch (error) {

@@ -33,3 +33,5 @@
 .demo-cta,.mini-content b{animation:pulse-blue 3s ease-out infinite}
 }
 @keyframes pulse-blue{0%{box-shadow:0 0 0 0 rgba(0,102,204,.35)}60%,100%{box-shadow:0 0 0 10px rgba(0,102,204,0)}}
+.phone-entry{display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,1fr);gap:8px;min-width:0}
+.phone-entry select{overflow:hidden;text-overflow:ellipsis;white-space:nowrap}
