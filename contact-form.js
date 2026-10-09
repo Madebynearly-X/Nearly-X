@@ -84,17 +84,21 @@
     countryPicker.className = "country-picker";
     countryTrigger.type = "button";
     countryTrigger.className = "country-picker__trigger";
-    countryTrigger.setAttribute("role", "combobox");
     countryTrigger.setAttribute("aria-label", "Country calling code");
-    countryTrigger.setAttribute("aria-haspopup", "listbox");
+    countryTrigger.setAttribute("aria-haspopup", "dialog");
     countryTrigger.setAttribute("aria-expanded", "false");
-    countryTrigger.setAttribute("aria-controls", "q-country-list");
+    countryTrigger.setAttribute("aria-controls", "q-country-picker-popover");
     countryPopover.className = "country-picker__popover";
+    countryPopover.id = "q-country-picker-popover";
+    countryPopover.setAttribute("role", "dialog");
+    countryPopover.setAttribute("aria-label", "Choose a country calling code");
     countryPopover.hidden = true;
     countrySearch.type = "search";
     countrySearch.className = "country-picker__search";
     countrySearch.placeholder = "Search countries";
     countrySearch.setAttribute("aria-label", "Search countries by name or calling code");
+    countrySearch.setAttribute("aria-autocomplete", "list");
+    countrySearch.setAttribute("aria-controls", "q-country-list");
     countryOptions.id = "q-country-list";
     countryOptions.className = "country-picker__options";
     countryOptions.setAttribute("role", "listbox");
@@ -113,6 +117,7 @@
       option.type = "button";
       option.className = "country-picker__option";
       option.setAttribute("role", "option");
+      option.tabIndex = -1;
       option.setAttribute("aria-selected", String(country === "South Africa"));
       option.dataset.country = country.toLowerCase();
       option.dataset.code = code;
@@ -131,6 +136,7 @@
         });
         updateCountryTrigger(countryFlagCodes[index], code, country);
         closeCountryPicker();
+        countryTrigger.focus();
       });
       countryOptions.append(option);
       countryOptionElements.push(option);
@@ -177,6 +183,8 @@
       } else if (event.key === "ArrowDown") {
         event.preventDefault();
         countryOptionElements.find((option) => !option.hidden)?.focus();
+      } else if (event.key === "Tab") {
+        closeCountryPicker();
       }
     });
     countryOptions.addEventListener("keydown", (event) => {
@@ -186,6 +194,8 @@
       if (event.key === "Escape") {
         closeCountryPicker();
         countryTrigger.focus();
+      } else if (event.key === "Tab") {
+        closeCountryPicker();
       } else if (event.key === "ArrowDown") {
         nextIndex = Math.min(currentIndex + 1, visibleOptions.length - 1);
       } else if (event.key === "ArrowUp") {

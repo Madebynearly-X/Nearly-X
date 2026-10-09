@@ -47,5 +47,8 @@ Until both Cloudflare secrets are set, sheet recording is disabled and the exist
 
 The Apps Script adds `last_contacted`, `follow_up_date`, and `notes` to the `Leads` sheet if they are missing. It formats the header, freezes it, adds a filter, and adds a `status` dropdown with `New`, `Contacted`, `Qualified`, `Proposal sent`, `Won`, and `Lost`. New enquiries are added as `New`; enter contact dates, follow-up dates, and notes manually as you work each lead. For an existing deployment, replace `Code.gs` with the latest contents of `scripts/google-sheets-webhook.gs`, save, then use **Deploy → Manage deployments → Edit** and deploy a new version of the web app. Keep its existing Script Properties and `/exec` URL; the Cloudflare secrets do not need changing.
 
+## Accessibility
+The site includes a skip link, named primary navigation, keyboard-visible focus indicators, keyboard-operable enquiry controls, semantic page landmarks, and reduced-motion support. These code improvements are not a legal ADA compliance certification or a complete WCAG conformance audit; test with assistive technologies and users, and review applicable legal requirements before making a compliance claim.
+
 ## Run locally
 Open `index.html` in a browser to preview the static pages. The enquiry endpoint requires Cloudflare Pages Functions and the `WEB3FORMS_ACCESS_KEY` secret, so the complete form flow must be tested on Cloudflare Pages or with Wrangler Pages development. Use dummy details for tests.
