@@ -15,7 +15,7 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 - `script.js` — mobile navigation, reveal-on-scroll, year and form validation/submission
 - `contact-form.js` — enquiry submission and international phone country-code picker; country flags load as Twemoji SVGs from cdnjs
 - `functions/api/enquiry.js` — server-side Web3Forms delivery and optional authenticated Google Sheets lead recording
-- `scripts/google-sheets-webhook.gs` — Google Apps Script endpoint that safely records leads in Google Sheets
+- `scripts/google-sheets-webhook.gs` — Google Apps Script endpoint that records leads and maintains the Sheet's follow-up pipeline
 
 ## Before publishing
 1. Confirm prices, timelines, included deliverables, revision limits and care plan terms.
@@ -42,6 +42,10 @@ This setup does not require n8n or a separate hosting service. It uses Google Sh
 8. Redeploy the Pages project. Update the site's privacy notice to cover lead storage in Google Sheets, the services processing it, and your retention practices. Submit a clearly marked test enquiry and confirm both the existing email and the row in the `Leads` tab before relying on this workflow.
 
 Until both Cloudflare secrets are set, sheet recording is disabled and the existing email flow is unchanged. If Google Sheets recording fails after activation, the email is still sent; the site reports that sheet recording was not confirmed. Apps Script logs failures without logging the enquiry contents.
+
+### Lead follow-up columns
+
+The Apps Script adds `last_contacted`, `follow_up_date`, and `notes` to the `Leads` sheet if they are missing. It formats the header, freezes it, adds a filter, and adds a `status` dropdown with `New`, `Contacted`, `Qualified`, `Proposal sent`, `Won`, and `Lost`. New enquiries are added as `New`; enter contact dates, follow-up dates, and notes manually as you work each lead. For an existing deployment, replace `Code.gs` with the latest contents of `scripts/google-sheets-webhook.gs`, save, then use **Deploy → Manage deployments → Edit** and deploy a new version of the web app. Keep its existing Script Properties and `/exec` URL; the Cloudflare secrets do not need changing.
 
 ## Run locally
 Open `index.html` in a browser to preview the static pages. The enquiry endpoint requires Cloudflare Pages Functions and the `WEB3FORMS_ACCESS_KEY` secret, so the complete form flow must be tested on Cloudflare Pages or with Wrangler Pages development. Use dummy details for tests.
