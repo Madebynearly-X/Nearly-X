@@ -68,28 +68,163 @@
       ["Western Sahara", "+212"], ["Yemen", "+967"], ["Zambia", "+260"], ["Zimbabwe", "+263"],
     ];
     const countryFlagCodes = "AF AL DZ AS AD AO AI AG AR AM AW AU AT AZ BS BH BD BB BY BE BZ BJ BM BT BO BA BW BR VG BN BG BF BI KH CM CA CV KY CF TD CL CN CO KM CG CK CR CI HR CU CW CY CZ CD DK DJ DM DO EC EG SV GQ ER EE SZ ET FK FO FJ FI FR GF PF GA GM GE DE GH GI GR GL GD GP GU GT GG GN GW GY HT HN HK HU IS IN ID IR IQ IE IM IL IT JM JP JE JO KZ KE KI XK KW KG LA LV LB LS LR LY LI LT LU MO MG MW MY MV ML MT MH MQ MR MU YT MX FM MD MC MN ME MS MA MZ MM NA NR NP NL NC NZ NI NE NG NU KP MK MP NO OM PK PW PS PA PG PY PE PH PL PT PR QA RE RO RU RW BL SH KN LC MF PM VC WS SM ST SA SN RS SC SL SG SX SK SI SB SO ZA KR SS ES LK SD SR SE CH SY TW TJ TZ TH TL TG TK TO TT TN TR TM TC TV UG UA AE GB US UY VI UZ VU VA VE VN WF EH YE ZM ZW".split(" ");
-    const flagForCountry = (code) => String.fromCodePoint(
-      ...Array.from(code, (letter) => 127397 + letter.charCodeAt(0)),
-    );
-    const countryCode = document.createElement("select");
+    const countryCode = document.createElement("input");
+    const countryPicker = document.createElement("div");
+    const countryTrigger = document.createElement("button");
+    const countryPopover = document.createElement("div");
+    const countrySearch = document.createElement("input");
+    const countryOptions = document.createElement("div");
     const phoneGroup = document.createElement("div");
 
     countryCode.id = "q-country-code";
     countryCode.name = "country_code";
-    countryCode.setAttribute("aria-label", "Country calling code");
-    countryCodes.forEach(([country, code], index) => {
-      const option = document.createElement("option");
-      option.value = code;
-      option.textContent = `${flagForCountry(countryFlagCodes[index])} ${code} ${country}`;
-      option.defaultSelected = country === "South Africa";
-      countryCode.append(option);
-    });
+    countryCode.type = "hidden";
     countryCode.value = "+27";
+    countryCode.defaultValue = "+27";
+    countryPicker.className = "country-picker";
+    countryTrigger.type = "button";
+    countryTrigger.className = "country-picker__trigger";
+    countryTrigger.setAttribute("role", "combobox");
+    countryTrigger.setAttribute("aria-label", "Country calling code");
+    countryTrigger.setAttribute("aria-haspopup", "listbox");
+    countryTrigger.setAttribute("aria-expanded", "false");
+    countryTrigger.setAttribute("aria-controls", "q-country-list");
+    countryPopover.className = "country-picker__popover";
+    countryPopover.hidden = true;
+    countrySearch.type = "search";
+    countrySearch.className = "country-picker__search";
+    countrySearch.placeholder = "Search countries";
+    countrySearch.setAttribute("aria-label", "Search countries by name or calling code");
+    countryOptions.id = "q-country-list";
+    countryOptions.className = "country-picker__options";
+    countryOptions.setAttribute("role", "listbox");
+    countryOptions.setAttribute("aria-label", "Countries and calling codes");
+
+    const countryOptionElements = [];
+    countryCodes.forEach(([country, code], index) => {
+      const countryCodeISO = countryFlagCodes[index].toLowerCase();
+      const flagSequence = Array.from(countryFlagCodes[index], (letter) =>
+        (127397 + letter.charCodeAt(0)).toString(16),
+      ).join("-");
+      const option = document.createElement("button");
+      const flag = document.createElement("img");
+      const label = document.createElement("span");
+
+      option.type = "button";
+      option.className = "country-picker__option";
+      option.setAttribute("role", "option");
+      option.setAttribute("aria-selected", String(country === "South Africa"));
+      option.dataset.country = country.toLowerCase();
+      option.dataset.code = code;
+      option.dataset.iso = countryCodeISO;
+      flag.className = "country-picker__flag";
+      flag.src = `https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/${flagSequence}.svg`;
+      flag.alt = "";
+      flag.width = 24;
+      flag.height = 18;
+      label.textContent = `${code} ${country}`;
+      option.append(flag, label);
+      option.addEventListener("click", () => {
+        countryCode.value = code;
+        countryOptions.querySelectorAll('[role="option"]').forEach((item) => {
+          item.setAttribute("aria-selected", String(item === option));
+        });
+        updateCountryTrigger(countryFlagCodes[index], code, country);
+        closeCountryPicker();
+      });
+      countryOptions.append(option);
+      countryOptionElements.push(option);
+    });
+
+    function updateCountryTrigger(iso, code, country) {
+      const flag = document.createElement("img");
+      const flagSequence = Array.from(iso, (letter) =>
+        (127397 + letter.charCodeAt(0)).toString(16),
+      ).join("-");
+      flag.className = "country-picker__flag";
+      flag.src = `https://cdnjs.cloudflare.com/ajax/libs/twemoji/14.0.2/svg/${flagSequence}.svg`;
+      flag.alt = "";
+      flag.width = 24;
+      flag.height = 18;
+      countryTrigger.replaceChildren(flag, document.createTextNode(`${code} ${country}`));
+      countryTrigger.setAttribute("aria-label", `${country}, ${code}`);
+    }
+
+    function closeCountryPicker() {
+      countryPopover.hidden = true;
+      countryTrigger.setAttribute("aria-expanded", "false");
+    }
+
+    function openCountryPicker() {
+      countryPopover.hidden = false;
+      countryTrigger.setAttribute("aria-expanded", "true");
+      countrySearch.value = "";
+      countryOptions.scrollTop = 0;
+      countryOptionElements.forEach((option) => { option.hidden = false; });
+      countrySearch.focus();
+    }
+
+    countrySearch.addEventListener("input", () => {
+      const query = countrySearch.value.trim().toLowerCase();
+      countryOptionElements.forEach((option) => {
+        option.hidden = !`${option.dataset.country} ${option.dataset.code}`.includes(query);
+      });
+    });
+    countrySearch.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closeCountryPicker();
+        countryTrigger.focus();
+      } else if (event.key === "ArrowDown") {
+        event.preventDefault();
+        countryOptionElements.find((option) => !option.hidden)?.focus();
+      }
+    });
+    countryOptions.addEventListener("keydown", (event) => {
+      const visibleOptions = countryOptionElements.filter((option) => !option.hidden);
+      const currentIndex = visibleOptions.indexOf(document.activeElement);
+      let nextIndex;
+      if (event.key === "Escape") {
+        closeCountryPicker();
+        countryTrigger.focus();
+      } else if (event.key === "ArrowDown") {
+        nextIndex = Math.min(currentIndex + 1, visibleOptions.length - 1);
+      } else if (event.key === "ArrowUp") {
+        nextIndex = Math.max(currentIndex - 1, 0);
+      } else if (event.key === "Home") {
+        nextIndex = 0;
+      } else if (event.key === "End") {
+        nextIndex = visibleOptions.length - 1;
+      }
+      if (nextIndex !== undefined && visibleOptions[nextIndex]) {
+        event.preventDefault();
+        visibleOptions[nextIndex].focus();
+      }
+    });
+    countryTrigger.addEventListener("click", () => {
+      if (countryPopover.hidden) openCountryPicker();
+      else closeCountryPicker();
+    });
+    document.addEventListener("click", (event) => {
+      if (!countryPicker.contains(event.target)) closeCountryPicker();
+    });
+    form.addEventListener("reset", () => {
+      window.setTimeout(() => {
+        const defaultOption = countryOptionElements.find((option) => option.dataset.iso === "za");
+        countryCode.value = defaultOption.dataset.code;
+        countryOptions.querySelectorAll('[role="option"]').forEach((option) => {
+          option.setAttribute("aria-selected", String(option === defaultOption));
+        });
+        updateCountryTrigger("ZA", defaultOption.dataset.code, "South Africa");
+      });
+    });
+    updateCountryTrigger("ZA", "+27", "South Africa");
+    countryPopover.append(countrySearch, countryOptions);
+    countryPicker.append(countryTrigger, countryPopover);
 
     phoneGroup.className = "phone-entry";
     phone.closest(".field").classList.add("phone-field");
     phone.parentNode.insertBefore(phoneGroup, phone);
-    phoneGroup.append(countryCode, phone);
+    phoneGroup.append(countryPicker, phone, countryCode);
     phone.setAttribute("autocomplete", "tel-national");
     phone.setAttribute("placeholder", "Phone number");
   }
