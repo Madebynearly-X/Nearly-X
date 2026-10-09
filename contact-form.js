@@ -67,22 +67,27 @@
       ["Vatican City", "+39"], ["Venezuela", "+58"], ["Vietnam", "+84"], ["Wallis and Futuna", "+681"],
       ["Western Sahara", "+212"], ["Yemen", "+967"], ["Zambia", "+260"], ["Zimbabwe", "+263"],
     ];
+    const countryFlagCodes = "AF AL DZ AS AD AO AI AG AR AM AW AU AT AZ BS BH BD BB BY BE BZ BJ BM BT BO BA BW BR VG BN BG BF BI KH CM CA CV KY CF TD CL CN CO KM CG CK CR CI HR CU CW CY CZ CD DK DJ DM DO EC EG SV GQ ER EE SZ ET FK FO FJ FI FR GF PF GA GM GE DE GH GI GR GL GD GP GU GT GG GN GW GY HT HN HK HU IS IN ID IR IQ IE IM IL IT JM JP JE JO KZ KE KI XK KW KG LA LV LB LS LR LY LI LT LU MO MG MW MY MV ML MT MH MQ MR MU YT MX FM MD MC MN ME MS MA MZ MM NA NR NP NL NC NZ NI NE NG NU KP MK MP NO OM PK PW PS PA PG PY PE PH PL PT PR QA RE RO RU RW BL SH KN LC MF PM VC WS SM ST SA SN RS SC SL SG SX SK SI SB SO ZA KR SS ES LK SD SR SE CH SY TW TJ TZ TH TL TG TK TO TT TN TR TM TC TV UG UA AE GB US UY VI UZ VU VA VE VN WF EH YE ZM ZW".split(" ");
+    const flagForCountry = (code) => String.fromCodePoint(
+      ...Array.from(code, (letter) => 127397 + letter.charCodeAt(0)),
+    );
     const countryCode = document.createElement("select");
     const phoneGroup = document.createElement("div");
 
     countryCode.id = "q-country-code";
     countryCode.name = "country_code";
     countryCode.setAttribute("aria-label", "Country calling code");
-    countryCodes.forEach(([country, code]) => {
+    countryCodes.forEach(([country, code], index) => {
       const option = document.createElement("option");
       option.value = code;
-      option.textContent = `${code} ${country}`;
+      option.textContent = `${flagForCountry(countryFlagCodes[index])} ${code} ${country}`;
       option.defaultSelected = country === "South Africa";
       countryCode.append(option);
     });
     countryCode.value = "+27";
 
     phoneGroup.className = "phone-entry";
+    phone.closest(".field").classList.add("field--full");
     phone.parentNode.insertBefore(phoneGroup, phone);
     phoneGroup.append(countryCode, phone);
     phone.setAttribute("autocomplete", "tel-national");
