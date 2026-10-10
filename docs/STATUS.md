@@ -31,7 +31,7 @@ Phase 2: Supervised channel execution — LinkedIn text-member publishing implem
 
 ## Blockers and owner actions
 
-- Cloudflare Access settings are not provisioned; remote deployment remains blocked until the owner configures the Access boundary. R2 is intentionally not required for the current text-first workflow.
+- Cloudflare Access settings are not provisioned; the Worker is deployed, but protected dashboard/API operations remain unavailable until the owner configures the Access boundary. R2 is intentionally not required for the current text-first workflow.
 - Real LLM credentials, provider/model selection and current spend rates are not configured. Keep the mock provider selected.
 - LinkedIn Developer app, Share on LinkedIn and OpenID Connect product access, server-side credentials, and an owner-authorized LinkedIn account are not configured. A real test post has not been sent.
 - Canva OAuth API calls use mocked responses in tests; no Canva account authorization, app credentials, template, or exported video has been verified live.
@@ -39,7 +39,7 @@ Phase 2: Supervised channel execution — LinkedIn text-member publishing implem
 
 ## Known limitations
 
-- The Worker has a remote D1 database with migrations applied, but no deployment has been performed. R2-backed media storage is intentionally deferred.
+- The Worker is deployed at `https://nearly-marketing-agent.madebynearly.workers.dev`; `/api/health` is verified, while protected routes fail closed with a setup error until Access is configured. R2-backed media storage is intentionally deferred.
 - LinkedIn publishing currently supports only owner-triggered, approved, text-only member posts. Company-page posts, media, scheduled publishing, trends, and analytics remain unimplemented.
 - Dashboard and API local authentication bypass is enabled only by the ignored `.dev.vars` development configuration; it must not be used in production.
 
