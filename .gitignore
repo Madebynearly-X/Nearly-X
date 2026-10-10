@@ -1,7 +1,12 @@
 .env
 .env.*
 !.env.example
+.dev.vars
+.dev.vars.*
+!.dev.vars.example
 .continue/
 .wrangler/
 .vscode/
 *.code-workspace
+node_modules/
+*.log

@@ -1,77 +1,53 @@
-# NEARLY Studio — multi-page redesign
+# NEARLY Studio
 
-A static, responsive website with an Apple-inspired minimalist direction (without copying Apple branding): generous whitespace, oversized typography, restrained blue accents, product-style mockups and simple navigation.
-
-## Pages
-- `index.html` — studio home
-- `concept-demos.html` — interactive sample websites with locally bundled stock photography
-- `landing-pages.html` — focused landing page service
-- `business-websites.html` — starter and business websites
-- `website-care.html` — maintenance service
-- `contact.html` — enquiry form, with service selection prefilled from page links and a searchable international calling-code picker
-- `thanks.html` — post-submission confirmation page
-- `privacy.html` — plain-language notice for website enquiries and lead handling
-
-## Files
-- `styles.css` — shared responsive design system
-- `concept-demos.css` and `concept-demos.js` — scoped styling and hash-based navigation for the sample websites
-- `assets/demo-home-services.jpg` and `assets/demo-fitness-studio.jpg` — Unsplash stock photos used in the illustrative concepts
-- `_headers` — Cloudflare Pages security headers and Content Security Policy
-- `script.js` — mobile navigation, reveal-on-scroll, year and form validation/submission
-- `contact-form.js` — enquiry submission and international phone country-code picker; country flags load as Twemoji SVGs from cdnjs
-- `functions/api/enquiry.js` — server-side Web3Forms delivery and optional authenticated Google Sheets lead recording
-- `scripts/google-sheets-webhook.gs` — Google Apps Script endpoint that records leads and maintains the Sheet's follow-up pipeline
-
-## Before publishing
-1. Confirm prices, timelines, included deliverables, revision limits and care plan terms.
-2. Confirm public contact details.
-3. The enquiry form uses a Cloudflare Pages Function at `/api/enquiry` to send enquiries through Web3Forms. Create a Web3Forms access key for `madebynearly@gmail.com`, then add it to the Cloudflare Pages project's **Settings → Variables and Secrets** as the encrypted secret `WEB3FORMS_ACCESS_KEY`. Never commit the key. Redeploy after configuring the secret. The form reports success only when Web3Forms accepts the submission; confirm delivery in Gmail and check Spam during the first live test. To email an enquiry copy to the person who submitted it, configure and test Web3Forms' autoresponder in its dashboard; the provider documents this as a Pro/Agency feature that only works on production websites.
-4. Keep `privacy.html` accurate as your data handling, service providers, and retention practices change.
-5. Replace illustrative mockups with real work as you have permission to publish it. Concept work should remain clearly labelled.
-6. Choose and connect a custom domain and matching business email. Update the canonical and Open Graph URLs from `nearly-x.pages.dev` on all indexable pages, and add the custom hostname to the Turnstile widget before launch.
-7. Create and add an Open Graph preview image, then test the favicon and page previews on social platforms.
-8. Deploy as a preview first and test every navigation link and enquiry flow on mobile and desktop before pointing your main domain at it.
-
-## Enquiry spam protection
-
-The contact form includes a honeypot field and Cloudflare Turnstile. Turnstile must be validated server-side; the Pages Function does this through Cloudflare Siteverify and checks the configured hostname and `enquiry` action before sending anything to email or Sheets.
-
-Before deploying the Turnstile integration:
-1. Create a Turnstile widget for `nearly-x.pages.dev` and any custom domain you use. Use Managed mode and do not enable pre-clearance.
-2. Set the widget's **site key** on the `cf-turnstile` element in `contact.html`. This key is public and belongs in the page; the **secret key must never go into source code or chat**.
-3. Add the widget's secret key to the Cloudflare Pages project's **Settings → Variables and Secrets** for Production as the encrypted secret `TURNSTILE_SECRET_KEY`.
-4. Only publish after both keys are configured. If either key is missing or does not match, form submissions will be rejected rather than silently bypassing verification.
-5. Submit a real test enquiry and verify it reaches both email and the Leads sheet. Expired or reused Turnstile tokens are rejected; visitors can retry the widget and submit again.
-
-Turnstile is provided at no cost by Cloudflare under its current service terms. It sends technical browser and network signals to Cloudflare for bot detection; see `privacy.html`. Keep the privacy notice accurate if you change providers or widget settings.
-
-## Security and cookies
-
-The site does not use advertising or analytics cookies or a cookie-preference store, so it does not need a consent banner for those purposes. Turnstile may use strictly necessary security cookies or similar signals; these are described in the privacy notice. `_headers` applies a restrictive Content Security Policy, clickjacking protection, MIME sniffing protection, a referrer policy, a permissions policy, and HSTS on Cloudflare Pages. Review the CSP whenever adding scripts, fonts, images, or other third-party services.
-
-## Optional: record enquiries in Google Sheets at no hosting cost
-
-This setup does not require n8n or a separate hosting service. It uses Google Sheets and a small Google Apps Script web app. Google account quotas and product terms apply. The website keeps using Web3Forms for enquiry email; the Cloudflare Pages Function separately sends a copy to your script for the private lead sheet. If recording fails, the form reports that the email was accepted but the lead tracker could not be updated.
-
-1. In Google Sheets, create a private spreadsheet named `NEARLY Leads` and add a tab named `Leads`. Keep access restricted to you and anyone who needs the enquiries.
-2. Open the spreadsheet ID from its URL: the long text between `/d/` and `/edit`. Keep this ID handy.
-3. Open [script.google.com](https://script.google.com/), create a new project, and paste the contents of `scripts/google-sheets-webhook.gs` into `Code.gs`. Save the project.
-4. In Apps Script, open **Project Settings** and add these **Script Properties**:
-   - `SPREADSHEET_ID` — the spreadsheet ID from step 2.
-   - `WEBHOOK_TOKEN` — a new, private random secret of at least 32 characters. Do not share or commit it.
-5. Choose **Deploy → New deployment → Web app**. Set **Execute as** to your Google account and **Who has access** to **Anyone**, then deploy and approve Google Sheets access. Anyone can reach this public endpoint, but it only records a lead when the private token matches.
-6. Copy the deployed web app URL. It should start with `https://script.google.com/macros/s/` and end with `/exec`.
-7. In the Cloudflare Pages project's **Settings → Variables and Secrets** for **Production**, add encrypted secrets named `GOOGLE_SHEETS_WEBHOOK_URL` (the Apps Script URL) and `GOOGLE_SHEETS_WEBHOOK_TOKEN` (the exact same random secret from step 4). Do not put either secret into website files or chat.
-8. Redeploy the Pages project. The site's `privacy.html` notice describes lead storage in Google Sheets, the services processing it, and the 12-month retention period for enquiries that do not become client relationships. Review it if these practices change. Submit a clearly marked test enquiry and confirm both the existing email and the row in the `Leads` tab before relying on this workflow.
-
-Until both Cloudflare secrets are set, sheet recording is disabled and the existing email flow is unchanged. If Google Sheets recording fails after activation, the email is still sent; the site reports that sheet recording was not confirmed. Apps Script logs failures without logging the enquiry contents.
-
-### Lead follow-up columns
-
-The Apps Script adds `last_contacted`, `follow_up_date`, and `notes` to the `Leads` sheet if they are missing. It formats the header, freezes it, adds a filter, and adds a `status` dropdown with `New`, `Contacted`, `Qualified`, `Proposal sent`, `Won`, and `Lost`. This setup is only repeated when headers need to be created or extended, so formatting and validation are not reapplied on every enquiry. New enquiries are added as `New`; enter contact dates, follow-up dates, and notes manually as you work each lead. For an existing deployment, replace `Code.gs` with the latest contents of `scripts/google-sheets-webhook.gs`, save, then use **Deploy → Manage deployments → Edit** and deploy a new version of the web app. Keep its existing Script Properties and `/exec` URL; the Cloudflare secrets do not need changing.
-
-## Accessibility
-The site includes a skip link, named primary navigation, keyboard-visible focus indicators, keyboard-operable enquiry controls, semantic page landmarks, and reduced-motion support. These code improvements are not a legal ADA compliance certification or a complete WCAG conformance audit; test with assistive technologies and users, and review applicable legal requirements before making a compliance claim.
+Static Cloudflare Pages site for NEARLY Studio, a South Africa-based web design studio working worldwide.
 
 ## Run locally
-Open `index.html` in a browser to preview the static pages. The enquiry endpoint requires Cloudflare Pages Functions and the `WEB3FORMS_ACCESS_KEY` secret, so the complete form flow must be tested on Cloudflare Pages or with Wrangler Pages development. Use dummy details for tests.
+
+For a static preview, open `index.html`. To test the Pages Function and `_headers`, use Wrangler from the repository root:
+
+```text
+npx wrangler pages dev .
+```
+
+The complete enquiry flow needs the environment variables listed below. Use test data locally and never commit secrets.
+
+## Deploy to Cloudflare Pages
+
+Push to `main`. The workflow in `.github/workflows/deploy-pages.yml` deploys the repository to Cloudflare Pages. Configure these GitHub repository secrets/variables first:
+
+- Secrets: `CLOUDFLARE_API_TOKEN`, `CLOUDFLARE_ACCOUNT_ID`
+- Variable: `CLOUDFLARE_PAGES_PROJECT`
+
+The token needs permission to deploy to Pages. The Cloudflare Pages project should be configured with its production secrets in the Cloudflare dashboard as well.
+
+## Pages
+
+- `index.html` — home, services, illustrative concepts and FAQ
+- `landing-pages.html` — landing page service
+- `business-websites.html` — business website service
+- `website-care.html` — ongoing website care service
+- `contact.html` — enquiry form and contact details
+- `thanks.html` — post-submission page
+- `privacy.html` — privacy notice
+- `concept-demos.html` — interactive illustrative concept demos
+- `404.html` — styled not-found page
+
+Shared assets and behaviour live in `styles.css`, `selected-concepts.css`, `concept-demos.css`, `script.js` and `concept-demos.js`.
+
+## Enquiry Function
+
+`functions/api/enquiry.js` handles `POST /api/enquiry`. It checks the same-origin request, validates the fields and Turnstile token, sends the enquiry through Web3Forms, and optionally records it in Google Sheets through an Apps Script webhook. The browser reports email success only after Web3Forms confirms delivery; if Sheets is enabled but does not confirm recording, the response includes a warning.
+
+Required/optional environment variable names:
+
+- `TURNSTILE_SECRET_KEY` — required Turnstile secret
+- `WEB3FORMS_ACCESS_KEY` — required Web3Forms access key
+- `GOOGLE_SHEETS_WEBHOOK_URL` — optional Apps Script web app URL; used with the token below
+- `GOOGLE_SHEETS_WEBHOOK_TOKEN` — optional shared webhook token
+
+Keep all values in Cloudflare Pages encrypted secrets or local ignored development files. Names are documented here; values must never be committed.
+
+## Repository safety
+
+`.gitignore` excludes environment files, Wrangler state, editor settings, logs, and dependencies. Review `_headers` whenever adding a third-party script, font, image source or endpoint because the Content Security Policy must be updated deliberately.
