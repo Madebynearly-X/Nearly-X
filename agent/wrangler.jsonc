@@ -14,7 +14,7 @@
     {
       "binding": "DB",
       "database_name": "nearly-marketing-agent",
-      "database_id": "00000000-0000-0000-0000-000000000000",
+      "database_id": "5c52c4f6-f1e1-4030-b7ae-b84324c1f3be",
       "migrations_dir": "migrations"
     }
   ],
