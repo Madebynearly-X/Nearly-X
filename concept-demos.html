@@ -9,7 +9,19 @@
   <meta property="og:title" content="Website concept demos | NEARLY Studio">
   <meta property="og:description" content="Explore three interactive illustrative website concepts by NEARLY Studio, based in South Africa and working worldwide.">
   <meta property="og:url" content="https://nearly-x.pages.dev/concept-demos">
-  <meta name="twitter:card" content="summary">
+  <meta name="twitter:card" content="summary_large_image">
+  <meta property="og:type" content="website">
+  <meta property="og:image" content="https://nearly-x.pages.dev/og-image.png">
+  <meta property="og:image:width" content="1200">
+  <meta property="og:image:height" content="630">
+  <meta property="og:image:alt" content="NEARLY Studio — Websites for businesses ready for more.">
+  <meta name="twitter:title" content="NEARLY Studio — Websites for businesses ready for more.">
+  <meta name="twitter:description" content="Considered websites for businesses ready for more.">
+  <meta name="twitter:image" content="https://nearly-x.pages.dev/og-image.png">
+  <meta name="twitter:image:alt" content="NEARLY Studio — Websites for businesses ready for more.">
+  <link rel="manifest" href="/site.webmanifest">
+  <link rel="apple-touch-icon" href="/apple-touch-icon.png">
+  <link rel="icon" href="/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="canonical" href="https://nearly-x.pages.dev/concept-demos">
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css">
@@ -35,113 +47,148 @@
 
   <main id="main" tabindex="-1">
     <section class="page-hero container">
-      <span class="page-kicker"><i></i> Illustrative website concepts</span>
-      <h1>Step inside<br><span class="soft">a design direction.</span></h1>
-      <p class="intro">Explore a complete page concept. The sample navigation and calls to action work, so you can get a feel for how each direction might come together.</p>
-      <p class="microcopy">Fictional brands and illustrative layouts — not commissioned client work.</p>
+      <span class="page-kicker"><i></i> Three worlds, made tangible</span>
+      <h1>Different by nature.<br><span class="soft">Nearly by design.</span></h1>
+      <p class="intro">Explore three original website concepts, each with its own character and a few details you can actually try.</p>
+      <p class="microcopy">Fictional brands and demo-only interactions — not commissioned client work.</p>
     </section>
 
     <section class="section section--white concept-demos" id="all-demos" aria-label="Website concept demos">
       <div class="container">
         <nav class="demo-picker" aria-label="Choose a website concept">
-          <a href="#demo-home">01&nbsp; Home services</a>
-          <a href="#demo-wellness">02&nbsp; Wellness</a>
-          <a href="#demo-creative">03&nbsp; Creative studio</a>
+          <a href="#demo-pulse"><span>01</span> Sound &amp; events</a>
+          <a href="#demo-company"><span>02</span> Company</a>
+          <a href="#demo-stream"><span>03</span> Streaming</a>
           <a class="demo-picker__back" href="index.html#work">Back to concepts</a>
         </nav>
         <p class="visually-hidden" data-demo-live aria-live="polite"></p>
 
-        <article class="concept-demo demo demo--home" id="demo-home" data-demo="home" aria-labelledby="demo-home-title">
-          <div class="demo__bar"><p class="eyebrow">Concept 01 · Home services</p><a class="demo__back" href="#all-demos">All concepts ↑</a></div>
+        <article class="concept-demo demo demo--pulse" id="demo-pulse" data-demo="pulse" aria-labelledby="demo-pulse-title">
+          <div class="demo__bar"><p class="eyebrow">Concept 01 · Sound &amp; events</p><a class="demo__back" href="#all-demos">All concepts ↑</a></div>
           <div class="demo__page">
-            <header class="demo__header" id="home-top">
-              <a class="demo__brand" href="#home-top" aria-label="Goodwork Home Co. home">goodwork<span>.</span></a>
-              <nav aria-label="Goodwork concept navigation"><a href="#home-services">Services</a><a href="#home-about">Our approach</a><a href="#home-contact">Contact</a></nav>
-              <a class="demo__header-cta" href="contact.html?package=business-website">Get a quote</a>
+            <header class="demo__header pulse__header" id="pulse-top">
+              <a class="demo__brand" href="#pulse-top" aria-label="PULSE Live home">PULSE<span>.live</span></a>
+              <nav aria-label="PULSE concept navigation"><a href="#pulse-lineup">The lineup</a><a href="#pulse-tickets">Tickets</a><a href="#pulse-about">About</a></nav>
+              <a class="demo__header-cta" href="#pulse-lineup">Explore the sound <span aria-hidden="true">↗</span></a>
             </header>
-            <section class="demo__hero">
-              <div class="demo__hero-copy">
-                <p class="demo__kicker">LOCAL HOME SPECIALISTS</p>
-                <h2 id="demo-home-title">Good work.<br><span>Done right.</span></h2>
-                <p>Reliable help for the place you call home. Straightforward service, thoughtful workmanship and no guesswork.</p>
-                <a class="demo__button" href="contact.html?package=business-website">Request a quote</a>
-                <p class="demo__trust"><span aria-hidden="true">★★★★★</span> A friendly team you can count on</p>
+            <section class="demo__hero pulse__hero">
+              <div class="demo__hero-copy pulse__hero-copy">
+                <p class="demo__kicker">A FICTIONAL LIVE-EVENT CONCEPT</p>
+                <h2 id="demo-pulse-title">Feel the<br><span>room move.</span></h2>
+                <p>Sound with a little more space around it. Meet the artists, find your energy and explore an event concept built to be heard.</p>
+                <button class="demo__button" type="button" data-audio-toggle aria-pressed="false">Play a sound preview <span aria-hidden="true">▶</span></button>
+                <p class="pulse__note">A short synthesised sample. Sound starts only when you press play.</p>
               </div>
-              <div class="demo__art demo__art--home"><img class="demo__photo" src="assets/demo-home-services.jpg" alt="Home service professional cleaning a bright window" width="1100" height="1100" loading="eager"><span class="home-art__badge">GOOD WORK<br>STARTS HERE</span><span class="home-art__note">STOCK PHOTO · UNSPLASH</span></div>
-            </section>
-            <div class="demo__ticker demo__ticker--home" aria-label="Home services"><span>REPAIRS</span><i></i><span>MAINTENANCE</span><i></i><span>HOME PROJECTS</span><i></i><span>FREE QUOTES</span></div>
-            <section class="demo__block" id="home-services">
-              <p class="demo__kicker">HOW WE CAN HELP</p><h3>Good care for every corner.</h3>
-              <div class="demo__list">
-                <article><span>01</span><h4>Repairs</h4><p>Small fixes and practical improvements, handled with care.</p></article>
-                <article><span>02</span><h4>Maintenance</h4><p>Regular upkeep that helps your home feel its best.</p></article>
-                <article><span>03</span><h4>Home projects</h4><p>A reliable pair of hands for the jobs on your list.</p></article>
+              <div class="demo__art pulse__art" role="img" aria-label="Abstract animated sound-wave artwork in violet, pink and blue">
+                <span class="pulse__orb pulse__orb--one"></span><span class="pulse__orb pulse__orb--two"></span>
+                <span class="pulse__art-label">P / 001<br>LIVE SOUND STUDY</span>
+                <div class="pulse__wave" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
+                <span class="pulse__art-bottom">A NIGHT IN GOOD COMPANY</span>
               </div>
             </section>
-            <section class="demo__cta" id="home-about"><p class="demo__kicker">A MORE PERSONAL SERVICE</p><h3>Good people. Clear communication.</h3><p>From the first conversation to the final tidy-up, know who is coming, what is happening and what comes next.</p><a class="demo__text-link" href="#home-contact">See how we work ↓</a></section>
-            <footer class="demo__footer" id="home-contact"><strong>Goodwork Home Co.</strong><span>Illustrative concept · Home services</span><a href="contact.html?package=business-website">Make a website like this</a></footer>
+            <div class="demo__ticker pulse__ticker" aria-label="Sound and events"><span>LIVE SOUND</span><i></i><span>GOOD PEOPLE</span><i></i><span>ROOM TO MOVE</span><i></i><span>STAY A LITTLE</span></div>
+            <section class="demo__block pulse__lineup" id="pulse-lineup" data-player>
+              <div class="demo__section-head"><div><p class="demo__kicker">01 / THE LINEUP</p><h3>Pick a frequency.</h3></div><p>Choose a name to hear a different original sound sketch.</p></div>
+              <div class="pulse__acts">
+                <button type="button" class="pulse__act" data-act="nova" aria-pressed="false"><span class="pulse__act-index">01</span><span class="pulse__act-name">Nova Drift</span><span class="pulse__act-style">Deep house · 118 BPM</span><span class="pulse__act-state" aria-hidden="true">Play ↗</span></button>
+                <button type="button" class="pulse__act" data-act="amber" aria-pressed="false"><span class="pulse__act-index">02</span><span class="pulse__act-name">Amber Static</span><span class="pulse__act-style">Afro-tech · 124 BPM</span><span class="pulse__act-state" aria-hidden="true">Play ↗</span></button>
+                <button type="button" class="pulse__act" data-act="orbit" aria-pressed="false"><span class="pulse__act-index">03</span><span class="pulse__act-name">Low Orbit</span><span class="pulse__act-style">Downtempo · 92 BPM</span><span class="pulse__act-state" aria-hidden="true">Play ↗</span></button>
+                <button type="button" class="pulse__act" data-act="kiln" aria-pressed="false"><span class="pulse__act-index">04</span><span class="pulse__act-name">Kiln</span><span class="pulse__act-style">Left-field · 132 BPM</span><span class="pulse__act-state" aria-hidden="true">Play ↗</span></button>
+              </div>
+              <p class="pulse__status" role="status" aria-live="polite" data-audio-status>Choose an artist to hear a short sound sketch. Audio is generated in your browser.</p>
+            </section>
+            <section class="demo__block pulse__tickets" id="pulse-tickets">
+              <div><p class="demo__kicker">02 / YOUR SPOT</p><h3>Make it your night.</h3><p class="pulse__ticket-note">An example ticket selector to show how event details could work. This is not a real event and no tickets are sold.</p></div>
+              <fieldset class="pulse__ticket-picker"><legend>Choose an experience</legend>
+                <label><input type="radio" name="pulse-ticket" value="Floor" checked><span><b>Floor</b><small>Close to the sound</small></span><i aria-hidden="true"></i></label>
+                <label><input type="radio" name="pulse-ticket" value="Balcony"><span><b>Balcony</b><small>A little room to take it in</small></span><i aria-hidden="true"></i></label>
+                <label><input type="radio" name="pulse-ticket" value="Backstage"><span><b>Backstage</b><small>A closer look behind the scenes</small></span><i aria-hidden="true"></i></label>
+                <div class="pulse__quantity"><span>Places</span><button type="button" data-qty="-1" aria-label="Fewer places" disabled>−</button><output data-qty-out aria-live="polite">1</output><button type="button" data-qty="1" aria-label="More places">+</button></div>
+                <button class="demo__button" type="button" data-reserve-demo>Preview this selection <span aria-hidden="true">↗</span></button>
+                <p class="pulse__ticket-status" role="status" aria-live="polite" data-ticket-status></p>
+              </fieldset>
+            </section>
+            <section class="demo__cta" id="pulse-about"><p class="demo__kicker">A NIGHT SHOULD FEEL LIKE SOMETHING</p><h3>Sound, space, and a reason to stay.</h3><p>A fictional event identity exploring how a music-led experience can feel distinct before you even arrive.</p></section>
+            <footer class="demo__footer"><strong>PULSE.live</strong><span>Illustrative concept · Sound &amp; events</span><a href="contact.html?package=business-website">Make a website like this</a></footer>
           </div>
         </article>
 
-        <article class="concept-demo demo demo--wellness" id="demo-wellness" data-demo="wellness" aria-labelledby="demo-wellness-title">
-          <div class="demo__bar"><p class="eyebrow">Concept 02 · Wellness</p><a class="demo__back" href="#all-demos">All concepts ↑</a></div>
+        <article class="concept-demo demo demo--company" id="demo-company" data-demo="company" aria-labelledby="demo-company-title">
+          <div class="demo__bar"><p class="eyebrow">Concept 02 · Company</p><a class="demo__back" href="#all-demos">All concepts ↑</a></div>
           <div class="demo__page">
-            <header class="demo__header" id="wellness-top">
-              <a class="demo__brand" href="#wellness-top" aria-label="Forme Studio home">forme <span>studio</span></a>
-              <nav aria-label="Forme concept navigation"><a href="#wellness-practice">The practice</a><a href="#wellness-about">About</a><a href="#wellness-contact">Contact</a></nav>
-              <a class="demo__header-cta" href="contact.html?package=business-website">Enquire</a>
+            <header class="demo__header company__header" id="company-top">
+              <a class="demo__brand" href="#company-top" aria-label="NORTHLINE Group home">NORTHLINE<span> / GROUP</span></a>
+              <nav aria-label="NORTHLINE concept navigation"><a href="#company-capabilities">Capabilities</a><a href="#company-approach">Approach</a><a href="#company-contact">Contact</a></nav>
+              <a class="demo__header-cta" href="contact.html?package=business-website">Start a conversation <span aria-hidden="true">↗</span></a>
             </header>
-            <section class="demo__hero">
+            <section class="demo__hero company__hero">
               <div class="demo__hero-copy">
-                <p class="demo__kicker">A STUDIO FOR EVERY BODY</p>
-                <h2 id="demo-wellness-title">Feel good<br><span>in motion.</span></h2>
-                <p>Strength, energy and a little more room to feel like yourself. Find your class and come as you are.</p>
-                <a class="demo__button" href="#wellness-practice">Find your class</a>
+                <p class="demo__kicker">A FICTIONAL BUSINESS-CONSULTING CONCEPT</p>
+                <h2 id="demo-company-title">Clarity for<br><span>what's next.</span></h2>
+                <p>When the moving parts matter, perspective helps. A considered digital home for teams shaping their next chapter.</p>
+                <a class="demo__button" href="#company-capabilities">Explore our approach <span aria-hidden="true">↓</span></a>
               </div>
-              <div class="demo__art demo__art--wellness"><img class="demo__photo" src="assets/demo-fitness-studio.jpg" alt="Small-group fitness class in a bright studio" width="1100" height="1100" loading="eager"><span class="wellness-art__caption">MOVE<br>YOUR WAY</span><span class="wellness-art__sticker">BOOK<br>A CLASS ↗</span><span class="wellness-art__credit">STOCK PHOTO · UNSPLASH</span></div>
+              <div class="demo__art company__art" role="img" aria-label="Abstract architectural composition in warm stone and deep forest green"><span class="company__sun"></span><span class="company__arch company__arch--back"></span><span class="company__arch company__arch--front"></span><span class="company__pillar"></span><span class="company__art-label">THOUGHTFUL<br>BY DESIGN</span></div>
             </section>
-            <div class="demo__ticker demo__ticker--wellness" aria-label="Forme Studio classes"><span>STRENGTH</span><i></i><span>PILATES</span><i></i><span>MOBILITY</span><i></i><span>GOOD ENERGY</span></div>
-            <section class="demo__block" id="wellness-practice">
-              <p class="demo__kicker">FIND YOUR OWN RHYTHM</p><h3>Classes to meet your energy.</h3>
-              <div class="demo__list">
-                <article><span>01 / RESET</span><h4>Slow flow</h4><p>Unroll your mat, find your breath and ease into movement.</p></article>
-                <article><span>02 / BUILD</span><h4>Mat Pilates</h4><p>Small-group sessions that build strength without the pressure.</p></article>
-                <article><span>03 / SWEAT</span><h4>Power hour</h4><p>Upbeat, full-body movement with a playlist to match.</p></article>
+            <div class="demo__ticker company__ticker" aria-label="Company capabilities"><span>STRATEGY</span><i></i><span>OPERATIONS</span><i></i><span>PEOPLE</span><i></i><span>PROGRESS, WITH PURPOSE</span></div>
+            <section class="demo__block company__capabilities" id="company-capabilities">
+              <div class="demo__section-head"><div><p class="demo__kicker">01 / CAPABILITIES</p><h3>Start with what matters.</h3></div><p>Choose a focus to see how this fictional company could frame its offer.</p></div>
+              <div class="company__tabs" role="tablist" aria-label="Choose a business focus">
+                <button type="button" id="company-tab-strategy" role="tab" aria-selected="true" aria-controls="company-panel-strategy" tabindex="0" data-company-tab="strategy">Strategy <span>01</span></button>
+                <button type="button" id="company-tab-operations" role="tab" aria-selected="false" aria-controls="company-panel-operations" tabindex="-1" data-company-tab="operations">Operations <span>02</span></button>
+                <button type="button" id="company-tab-people" role="tab" aria-selected="false" aria-controls="company-panel-people" tabindex="-1" data-company-tab="people">People <span>03</span></button>
+              </div>
+              <div class="company__panels">
+                <div id="company-panel-strategy" role="tabpanel" aria-labelledby="company-tab-strategy" data-company-panel="strategy"><span>01 / FIND THE SIGNAL</span><h4>See the whole picture.</h4><p>Bring priorities into focus, make room for better questions and build a direction your team can move with.</p></div>
+                <div id="company-panel-operations" role="tabpanel" aria-labelledby="company-tab-operations" data-company-panel="operations" hidden><span>02 / MAKE IT WORK</span><h4>Make the complex feel clear.</h4><p>Connect the everyday details to the bigger picture, so good work has a practical path forward.</p></div>
+                <div id="company-panel-people" role="tabpanel" aria-labelledby="company-tab-people" data-company-panel="people" hidden><span>03 / BRING PEOPLE IN</span><h4>Move forward, together.</h4><p>Give teams a shared understanding of what matters and a more considered way to work through change.</p></div>
               </div>
             </section>
-            <section class="demo__cta" id="wellness-about"><p class="demo__kicker">YOUR NEXT CLASS STARTS HERE</p><h3>Bring your energy. Leave feeling stronger.</h3><p>Good coaching, a welcoming crew and a fresh reason to show up for yourself each week.</p><a class="demo__text-link" href="#wellness-contact">Meet your studio ↓</a></section>
-            <footer class="demo__footer" id="wellness-contact"><strong>Forme Studio</strong><span>Illustrative concept · Wellness</span><a href="contact.html?package=business-website">Make a website like this</a></footer>
+            <section class="demo__cta company__approach" id="company-approach"><p class="demo__kicker">02 / A CONSIDERED APPROACH</p><h3>Good decisions need room to breathe.</h3><p>Less noise around the work. More clarity about where to focus, what comes next and how to bring people along.</p><a class="demo__text-link" href="contact.html?package=business-website">Explore a website for your business <span aria-hidden="true">↗</span></a></section>
+            <footer class="demo__footer" id="company-contact"><strong>NORTHLINE / GROUP</strong><span>Illustrative concept · Company</span><a href="contact.html?package=business-website">Make a website like this</a></footer>
           </div>
         </article>
 
-        <article class="concept-demo demo demo--creative" id="demo-creative" data-demo="creative" aria-labelledby="demo-creative-title">
-          <div class="demo__bar"><p class="eyebrow">Concept 03 · Creative studio</p><a class="demo__back" href="#all-demos">All concepts ↑</a></div>
+        <article class="concept-demo demo demo--stream" id="demo-stream" data-demo="stream" aria-labelledby="demo-stream-title">
+          <div class="demo__bar"><p class="eyebrow">Concept 03 · Film &amp; streaming</p><a class="demo__back" href="#all-demos">All concepts ↑</a></div>
           <div class="demo__page">
-            <header class="demo__header" id="creative-top">
-              <a class="demo__brand" href="#creative-top" aria-label="Almost Studio home">ALMOST<span>®</span></a>
-              <nav aria-label="Almost Studio concept navigation"><a href="#creative-work">Selected work</a><a href="#creative-about">Studio</a><a href="#creative-contact">Contact</a></nav>
-              <a class="demo__header-cta" href="contact.html?package=business-website">Let's talk</a>
+            <header class="demo__header stream__header" id="stream-top">
+              <a class="demo__brand" href="#stream-top" aria-label="AFTERFRAME home">AFTER<span>FRAME</span></a>
+              <nav aria-label="AFTERFRAME concept navigation"><a href="#stream-catalogue">Discover</a><a href="#stream-curation">The collection</a></nav>
+              <a class="demo__header-cta" href="#stream-catalogue">Explore the collection <span aria-hidden="true">↗</span></a>
             </header>
-            <section class="demo__hero">
-              <div class="demo__hero-copy">
-                <p class="demo__kicker">INDEPENDENT CREATIVE STUDIO · SOUTH AFRICA</p>
-                <h2 id="demo-creative-title">Make a<br><span>little</span><br>noise.</h2>
-                <p>Ideas with character, made for the real world.</p>
-                <a class="demo__button" href="#creative-work">View selected work ↓</a>
+            <section class="stream__hero">
+              <div class="stream__hero-copy">
+                <p class="demo__kicker">A FICTIONAL FILM &amp; SERIES CONCEPT</p>
+                <p class="stream__eyebrow">AFTERFRAME ORIGINAL · LIMITED SERIES</p>
+                <h2 id="demo-stream-title">Some stories<br>stay <span>with you.</span></h2>
+                <p>Find something unexpected in a handpicked collection of imagined films, series and short stories.</p>
+                <a class="demo__button" href="#stream-catalogue">Find your next story <span aria-hidden="true">↓</span></a>
               </div>
-              <div class="demo__art demo__art--creative" role="img" aria-label="Abstract graphic illustration with a bold typographic mark"><span class="creative-art__shape"></span><span class="creative-art__type">A!</span><span class="creative-art__orbit"></span><span class="creative-art__caption">GOOD IDEAS<br>DON'T SIT STILL</span></div>
+              <div class="stream__hero-art" role="img" aria-label="Illustrated moonlit landscape artwork for the fictional series The Blue Hour"><span class="stream__moon"></span><span class="stream__ridge stream__ridge--one"></span><span class="stream__ridge stream__ridge--two"></span><span class="stream__hero-title">THE<br>BLUE<br>HOUR</span><span class="stream__hero-meta">A STORY IN SIX PARTS</span></div>
             </section>
-            <section class="demo__block" id="creative-work">
-              <p class="demo__kicker">A FEW WAYS WE THINK</p><h3>Make the familiar feel new.</h3>
-              <div class="demo__projects">
-                <article><span>01 / IDENTITY</span><h4>New perspective.</h4><p>Visual identity · Illustrative concept</p></article>
-                <article><span>02 / DIGITAL</span><h4>Built to stand out.</h4><p>Website direction · Illustrative concept</p></article>
-                <article><span>03 / CAMPAIGN</span><h4>Ideas in motion.</h4><p>Campaign concept · Illustrative concept</p></article>
+            <section class="demo__block stream__catalogue" id="stream-catalogue">
+              <div class="demo__section-head"><div><p class="demo__kicker">01 / THE COLLECTION</p><h3>Stay for the story.</h3></div><p>Filter the fictional catalogue, then open a title to preview the viewing experience.</p></div>
+              <div class="stream__filters" role="group" aria-label="Filter the collection">
+                <button type="button" data-stream-filter="all" aria-pressed="true">Everything</button><button type="button" data-stream-filter="film" aria-pressed="false">Films</button><button type="button" data-stream-filter="series" aria-pressed="false">Series</button><button type="button" data-stream-filter="short" aria-pressed="false">Shorts</button>
               </div>
+              <div class="stream__cards">
+                <article class="stream__card stream__card--blue" data-stream-card data-genre="series"><button type="button" class="stream__poster" data-watch-open data-title="The Blue Hour" data-kind="Limited series · Fictional title" data-description="A quiet coastal town. A sky that never quite turns dark. An imagined series about the moments that change how we see home."><span class="stream__poster-art"><i></i><b></b></span><span class="stream__play" aria-hidden="true">▶</span><span class="stream__poster-copy"><small>AFTERFRAME ORIGINAL</small><strong>THE<br>BLUE HOUR</strong></span><span class="stream__card-meta"><b>The Blue Hour</b><small>Series · 6 parts</small></span></button></article>
+                <article class="stream__card stream__card--amber" data-stream-card data-genre="film"><button type="button" class="stream__poster" data-watch-open data-title="A Map of Elsewhere" data-kind="Feature film · Fictional title" data-description="An imagined road story about detours, old friends and the places between where you started and where you are going."><span class="stream__poster-art"><i></i><b></b></span><span class="stream__play" aria-hidden="true">▶</span><span class="stream__poster-copy"><small>A FILM ABOUT FINDING YOUR WAY</small><strong>A MAP OF<br>ELSEWHERE</strong></span><span class="stream__card-meta"><b>A Map of Elsewhere</b><small>Film · 1h 42m</small></span></button></article>
+                <article class="stream__card stream__card--green" data-stream-card data-genre="short"><button type="button" class="stream__poster" data-watch-open data-title="Small Hours" data-kind="Short film · Fictional title" data-description="One late-night radio host. One caller who cannot sleep. An imagined short about the kindness of being heard."><span class="stream__poster-art"><i></i><b></b></span><span class="stream__play" aria-hidden="true">▶</span><span class="stream__poster-copy"><small>AN AFTERFRAME SHORT</small><strong>SMALL<br>HOURS</strong></span><span class="stream__card-meta"><b>Small Hours</b><small>Short · 18 min</small></span></button></article>
+                <article class="stream__card stream__card--violet" data-stream-card data-genre="series"><button type="button" class="stream__poster" data-watch-open data-title="The Quiet Signal" data-kind="Series · Fictional title" data-description="A signal appears on an old receiver. Three neighbours follow it in different directions. An imagined story about listening closely."><span class="stream__poster-art"><i></i><b></b></span><span class="stream__play" aria-hidden="true">▶</span><span class="stream__poster-copy"><small>A NEW KIND OF MYSTERY</small><strong>THE QUIET<br>SIGNAL</strong></span><span class="stream__card-meta"><b>The Quiet Signal</b><small>Series · 4 parts</small></span></button></article>
+              </div>
+              <p class="stream__note">All titles and artwork are fictional placeholders. No films or series are available to play.</p>
             </section>
-            <section class="demo__cta" id="creative-about"><p class="demo__kicker">SMALL STUDIO. BIG CURIOSITY.</p><h3>Good work should feel like you.</h3><p>We bring strategy, identity and digital together to help businesses show up with clarity and character.</p><a class="demo__text-link" href="#creative-contact">Meet the studio ↓</a></section>
-            <footer class="demo__footer" id="creative-contact"><strong>Almost Studio</strong><span>Illustrative concept · Creative studio</span><a href="contact.html?package=business-website">Make a website like this</a></footer>
+            <section class="demo__cta stream__curation" id="stream-curation"><p class="demo__kicker">02 / MADE FOR THE MOMENT</p><h3>Less scrolling. More feeling.</h3><p>A calmer way to find something worth watching, with an experience that gives the stories the room they deserve.</p></section>
+            <footer class="demo__footer"><strong>AFTERFRAME</strong><span>Illustrative concept · Film &amp; streaming</span><a href="contact.html?package=business-website">Make a website like this</a></footer>
           </div>
+          <dialog class="stream__dialog" aria-labelledby="stream-dialog-title" data-watch-dialog>
+            <form method="dialog"><button class="stream__dialog-close" aria-label="Close title preview">×</button></form>
+            <p class="demo__kicker">AFTERFRAME · CONCEPT PREVIEW</p><p class="stream__dialog-kind" data-dialog-kind></p><h3 id="stream-dialog-title" data-dialog-title></h3><p data-dialog-description></p>
+            <p class="stream__dialog-note">This is a visual interaction only. No film or series is playing.</p>
+            <form method="dialog"><button class="demo__button">Back to the collection</button></form>
+          </dialog>
         </article>
       </div>
     </section>

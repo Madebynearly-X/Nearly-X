@@ -3,4 +3,42 @@
 (()=>{'use strict';const $$=(s,c=document)=>[...c.querySelectorAll(s)];const reduced=window.matchMedia('(prefers-reduced-motion: reduce)').matches;const header=document.querySelector('.site-header');const bar=document.createElement('div');bar.className='scroll-progress';bar.setAttribute('aria-hidden','true');document.body.prepend(bar);let ticking=false;const onScroll=()=>{const max=document.documentElement.scrollHeight-innerHeight;bar.style.setProperty('--progress',max>0?Math.min(scrollY/max,1):0);if(header)header.classList.toggle('is-scrolled',scrollY>8);ticking=false};addEventListener('scroll',()=>{if(!ticking){ticking=true;requestAnimationFrame(onScroll)}},{passive:true});onScroll();if(reduced)return;
 const targets=$$('.section-head,.tile,.split>*,.price-row,.faq details,.cta-band,.contact-layout>*,.feature-list li').filter(el=>!el.classList.contains('reveal')&&!el.closest('.reveal'));targets.forEach(el=>el.classList.add('reveal'));$$('.grid-3,.feature-list,.faq,.split,.contact-layout').forEach(group=>[...group.children].filter(el=>el.classList.contains('reveal')).forEach((el,i)=>el.style.setProperty('--d',(i*.09).toFixed(2)+'s')));$$('.price-row').forEach((el,i)=>el.style.setProperty('--d',(i%3*.08).toFixed(2)+'s'));document.addEventListener('transitionend',e=>{const el=e.target;if(e.propertyName==='opacity'&&el.classList.contains('reveal')&&el.classList.contains('is-visible'))el.style.removeProperty('--d')});if('IntersectionObserver'in window){const io=new IntersectionObserver(entries=>entries.forEach(entry=>{if(entry.isIntersecting){const el=entry.target;el.classList.add('is-visible');io.unobserve(el)}}),{threshold:.12});targets.forEach(el=>io.observe(el))}else targets.forEach(el=>el.classList.add('is-visible'));
 const fine=window.matchMedia('(hover: hover) and (pointer: fine)').matches;if(fine){const tilt=(area,el,base='',strength=6)=>{if(!area||!el)return;area.addEventListener('pointermove',e=>{const r=area.getBoundingClientRect(),x=(e.clientX-r.left)/r.width-.5,y=(e.clientY-r.top)/r.height-.5;el.style.transform=`${base} rotateX(${(-y*strength).toFixed(2)}deg) rotateY(${(x*strength).toFixed(2)}deg)`});area.addEventListener('pointerleave',()=>{el.style.transform=base})};tilt(document.querySelector('.stage'),document.querySelector('.browser'),'',5);$$('.visual-card').forEach(card=>tilt(card,card.querySelector('.mini-window'),'rotate(-2deg)',10));$$('.tile,.cta-band').forEach(el=>el.addEventListener('pointermove',e=>{const r=el.getBoundingClientRect();el.style.setProperty('--mx',e.clientX-r.left+'px');el.style.setProperty('--my',e.clientY-r.top+'px')}))}
+
+// Enhanced concept card parallax and interactions
+if(!reduced&&fine){
+  const conceptCards=$$('.concept-card');
+  conceptCards.forEach(card=>{
+    const preview=card.querySelector('.concept-preview');
+    if(!preview)return;
+    card.addEventListener('pointermove',e=>{
+      const r=card.getBoundingClientRect();
+      const x=(e.clientX-r.left)/r.width-.5;
+      const y=(e.clientY-r.top)/r.height-.5;
+      preview.style.transform=`scale(1.05) translateX(${x*10}px) translateY(${y*10}px)`;
+    });
+    card.addEventListener('pointerleave',()=>{
+      preview.style.transform='';
+    });
+  });
+}
+
+// Parallax effect for floating shapes
+if(!reduced){
+  const floatingShapes=$$('.floating-shape');
+  let ticking2=false;
+  const onScroll2=()=>{
+    const scrollY=window.pageYOffset||document.documentElement.scrollTop;
+    floatingShapes.forEach((shape,i)=>{
+      const speed=0.1+(i*0.05);
+      shape.style.transform=`translateY(${scrollY*speed}px)`;
+    });
+    ticking2=false;
+  };
+  addEventListener('scroll',()=>{
+    if(!ticking2){
+      ticking2=true;
+      requestAnimationFrame(onScroll2);
+    }
+  },{passive:true});
+}
 })();

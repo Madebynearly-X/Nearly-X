@@ -15,7 +15,7 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 ## Files
 - `styles.css` — shared responsive design system
 - `concept-demos.css` and `concept-demos.js` — scoped styling and hash-based navigation for the sample websites
-- `assets/demo-home-services.jpg` and `assets/demo-fitness-studio.jpg` — Unsplash stock photos used in the illustrative concepts
+- `assets/` — optional local assets for future concept work
 - `_headers` — Cloudflare Pages security headers and Content Security Policy
 - `script.js` — mobile navigation, reveal-on-scroll, year and form validation/submission
 - `contact-form.js` — enquiry submission and international phone country-code picker; country flags load as Twemoji SVGs from cdnjs

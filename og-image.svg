@@ -1,0 +1,20 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="1200" height="630" viewBox="0 0 1200 630" role="img" aria-labelledby="title desc">
+  <title id="title">NEARLY Studio — Websites for businesses ready for more.</title>
+  <desc id="desc">Considered websites, clear messaging and a better next step from NEARLY Studio.</desc>
+  <rect width="1200" height="630" fill="#171817"/>
+  <circle cx="1030" cy="-10" r="280" fill="#d8ff3e" opacity=".95"/>
+  <circle cx="1110" cy="540" r="185" fill="#24301b"/>
+  <path d="M0 530C260 440 360 610 650 510s390-80 550 30v90H0z" fill="#20221e"/>
+  <g fill="none" stroke="#d8ff3e" stroke-width="2" opacity=".45">
+    <path d="M760 84h270M760 104h180M760 124h220"/>
+    <path d="M920 310h170M920 330h110M920 350h145"/>
+  </g>
+  <rect x="72" y="72" width="54" height="54" rx="15" fill="#d8ff3e"/>
+  <path d="M88 111V87h8l13 15V87h7v24h-7L95 96v15z" fill="#171817"/>
+  <text x="150" y="111" fill="#f5f5f7" font-family="Arial, Helvetica, sans-serif" font-size="26" font-weight="700" letter-spacing="2">NEARLY <tspan fill="#a9aaa4" font-size="17" font-weight="400">STUDIO</tspan></text>
+  <text x="72" y="270" fill="#d8ff3e" font-family="Arial, Helvetica, sans-serif" font-size="18" font-weight="700" letter-spacing="4">WEB DESIGN · SOUTH AFRICA</text>
+  <text x="68" y="365" fill="#f5f5f7" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="700" letter-spacing="-4">Websites for</text>
+  <text x="68" y="445" fill="#a9aaa4" font-family="Arial, Helvetica, sans-serif" font-size="76" font-weight="700" letter-spacing="-4">businesses ready for more.</text>
+  <text x="72" y="555" fill="#f5f5f7" font-family="Arial, Helvetica, sans-serif" font-size="17" letter-spacing="1">nearly-x.pages.dev</text>
+  <text x="1126" y="555" fill="#171817" font-family="Arial, Helvetica, sans-serif" font-size="17" font-weight="700" text-anchor="end" letter-spacing="2">NEARLY / 01</text>
+</svg>

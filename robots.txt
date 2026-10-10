@@ -1,4 +1,4 @@
 User-agent: *
 Allow: /
 
-Sitemap: https://nearly-x.pages.dev/sitemap.xml
+Sitemap: https://[YOUR-DOMAIN]/sitemap.xml
