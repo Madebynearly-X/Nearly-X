@@ -24,7 +24,7 @@ If the findings contradict a fixed architecture decision, stop and report.
 
 ## Step 1: Scaffold `/agent`
 
-- Separate Worker with `wrangler.jsonc`: D1 binding `DB`, R2 binding `MEDIA`, static assets for the dashboard, a Cron Trigger every 15 minutes, `compatibility_date` set to today's date.
+- Separate Worker with `wrangler.jsonc`: D1 binding `DB`, static assets for the dashboard, a Cron Trigger every 15 minutes, `compatibility_date` set to today's date. Keep media storage optional for the initial text-first workflow.
 - TypeScript strict, Hono, zod, Vitest (use the Workers test pool). Pin dependency versions. Add scripts: `dev`, `build`, `typecheck`, `lint`, `test`, `deploy`, `db:migrate:local`, `db:migrate:remote`.
 - `.dev.vars.example` with placeholders only. Add `.dev.vars`, `.env*`, `.wrangler/` to `.gitignore`.
 
@@ -83,7 +83,7 @@ Cover at minimum: auth fail-closed, approval gate blocks unapproved publishing, 
 
 ## Step 11: Documentation
 
-`agent/README.md`, `docs/SETUP.md` (exact commands for local run, D1/R2 creation, secrets, deploy, Cloudflare Access), `docs/CAPABILITIES.md`, and an updated `docs/STATUS.md`.
+`agent/README.md`, `docs/SETUP.md` (exact commands for local run, D1 creation, secrets, deploy, Cloudflare Access), `docs/CAPABILITIES.md`, and an updated `docs/STATUS.md`.
 
 ---
 

@@ -1,6 +1,5 @@
 export type Env = {
   DB: D1Database;
-  MEDIA: R2Bucket;
   ASSETS: Fetcher;
   ENVIRONMENT?: string;
   ALLOW_DEV_AUTH_BYPASS?: string;

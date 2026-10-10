@@ -2,7 +2,7 @@
 
 ## Outcome and constraints
 
-Build the marketing agent as an independent Cloudflare Worker in `/agent`, with a private dashboard, D1-backed state, R2 media binding, supervised-by-default controls, and a locally testable mock LLM provider. Do not change the public site's files or enable real social publishing.
+Build the marketing agent as an independent Cloudflare Worker in `/agent`, with a private dashboard, D1-backed state, supervised-by-default controls, and a locally testable mock LLM provider. Keep media storage optional so the initial text-first workflow does not require a paid R2 subscription. Do not change the public site's files or enable real social publishing.
 
 ## Milestones and dependencies
 
@@ -23,10 +23,10 @@ Build the marketing agent as an independent Cloudflare Worker in `/agent`, with 
 - Unapproved content and a global pause prevent export/publication and job execution; invalid transitions and duplicate keys are rejected.
 - Authentication fails closed, production cannot use the local bypass, and configured spend limits block LLM requests.
 - Capability and dashboard states do not claim social integrations or analytics are live; no secrets appear in the dashboard bundle.
-- No public-site files are changed. Cloudflare deployment, Access, D1/R2 provisioning, and real credentials are owner-side setup and are not performed as part of local implementation.
+- No public-site files are changed. Worker deployment, Access configuration, and real credentials are owner-side setup and are not performed as part of local implementation.
 
 ## Risks and open prerequisites
 
-- Cloudflare account resources (`database_id`, R2 bucket, Access team domain/audience) are not available in the repository and must not be guessed.
+- Cloudflare Access team domain/audience and production secrets must not be guessed. R2 is optional and intentionally not required for Phase 1.
 - No Node/npm executable was detected during initial inspection; recheck before validation. If unavailable, code can be prepared but JavaScript test/build acceptance cannot be honestly marked verified.
 - API credentials and live social accounts are intentionally not required for Phase 1; real provider calls must fail with explicit setup guidance until credentials are configured.

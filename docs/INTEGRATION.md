@@ -67,12 +67,11 @@ Run these from `/agent`. Your existing Pages site is not involved.
    ```
    npx wrangler login
    ```
-2. **Create the database and bucket:**
+2. **Create the database:**
    ```
-   npx wrangler d1 create nearly-agent
-   npx wrangler r2 bucket create nearly-agent-media
+   npx wrangler d1 create nearly-marketing-agent
    ```
-   Copy the `database_id` printed by the first command into `wrangler.jsonc` under the `DB` binding. R2 may ask you to enable it in the dashboard first, and may ask for a payment method even though a free tier exists. Check the current limits on Cloudflare's pricing page.
+   Copy the `database_id` into `wrangler.jsonc` under the `DB` binding. This Worker does not require R2 for its current text-first workflow. Media storage can be added later as an explicitly approved optional capability.
 3. **Apply migrations** (local first, then remote):
    ```
    npm run db:migrate:local

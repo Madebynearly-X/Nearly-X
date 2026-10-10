@@ -33,7 +33,7 @@
 
 ## Compatibility with the agent pack
 
-- The pack's architecture requires a separate Cloudflare Worker, D1, R2, and dashboard under `/agent`; this avoids placing privileged integration secrets or cron jobs in the public site.
+- The pack's architecture requires a separate Cloudflare Worker, D1, and dashboard under `/agent`; optional object storage can be added later without placing privileged integration secrets or cron jobs in the public site.
 - The existing Pages Function and `_headers` establish Cloudflare Pages usage, so the absence of a Wrangler file is a configuration gap, not the absence of Cloudflare support. The Worker can have its own Wrangler config.
 - The public site's files are explicitly out of scope and will remain unchanged. Agent capabilities without credentials or verified APIs will be labelled unavailable, mocked, or unverified rather than represented as live.
 - Existing root instructions in `AGENTS.md` reinforce inspection, security, and preserving site behavior; no material conflict with the agent pack was found.

@@ -24,9 +24,8 @@ Only perform the following after confirming the desired Cloudflare account and W
 1. Authenticate with `npx wrangler login`.
 2. Create a D1 database: `npx wrangler d1 create nearly-marketing-agent`.
 3. Replace the all-zero placeholder `database_id` in `agent/wrangler.jsonc` with the returned ID. Do not put credentials in the config.
-4. Create the R2 bucket: `npx wrangler r2 bucket create nearly-marketing-agent-media`.
-5. Apply schema changes: `npm run db:migrate:remote`.
-6. Configure Cloudflare Access to protect the Worker route and allow only the owner's identity. Set the Access team's domain and audience in Worker secrets:
+4. Apply schema changes: `npm run db:migrate:remote`.
+5. Configure Cloudflare Access to protect the Worker route and allow only the owner's identity. Set the Access team's domain and audience in Worker secrets:
 
    ```powershell
    npx wrangler secret put ACCESS_TEAM_DOMAIN
@@ -35,7 +34,7 @@ Only perform the following after confirming the desired Cloudflare account and W
    ```
 
    `OWNER_EMAIL` must match the email claim in the verified Access JWT. Do not rely on frontend-only protection.
-7. To enable LinkedIn member-post publishing:
+6. To enable LinkedIn member-post publishing:
 
    - Create a LinkedIn Developer app and add the exact HTTPS callback `https://<your-agent-host>/api/integrations/linkedin/callback`.
    - In the Developer Portal, request/enable **Share on LinkedIn** and **Sign In with LinkedIn using OpenID Connect**. LinkedIn controls app/product access; this repository cannot grant it. The connection requests only `openid`, `profile`, and `w_member_social`.
@@ -54,7 +53,7 @@ Only perform the following after confirming the desired Cloudflare account and W
    - Only approved text-only member posts can be sent. The request includes the approved caption/script, call to action, and a tagged destination URL. Company-page posts, image/video uploads, scheduling, and analytics are not included. Each publication is owner-triggered. If LinkedIn's response is uncertain, check the member feed and resolve the recorded attempt before retrying.
    - Verify with a clearly marked test post and confirm its presence in the intended LinkedIn member feed. A mocked test response is not a live verification.
    - Disconnecting removes the encrypted token from this Worker; it does not revoke LinkedIn's app authorization. Revoke the app's access in LinkedIn's account settings if you need to withdraw that authorization.
-8. To connect Canva, create a Canva Developer app and register the exact HTTPS callback `https://<your-agent-host>/api/integrations/canva/callback` in its redirect URL list. Public apps must pass Canva's app review before release; private apps are limited to Enterprise teams and require team-owner/admin review. Enable the OAuth scopes `design:content:write`, `design:content:read`, and `design:meta:read`. The account used for template autofill must be on an eligible Canva Pro, Teams, or Enterprise plan. Configure the following Worker secrets:
+7. To connect Canva, create a Canva Developer app and register the exact HTTPS callback `https://<your-agent-host>/api/integrations/canva/callback` in its redirect URL list. Public apps must pass Canva's app review before release; private apps are limited to Enterprise teams and require team-owner/admin review. Enable the OAuth scopes `design:content:write`, `design:content:read`, and `design:meta:read`. The account used for template autofill must be on an eligible Canva Pro, Teams, or Enterprise plan. Configure the following Worker secrets:
 
    ```powershell
    npx wrangler secret put CANVA_CLIENT_ID
@@ -64,8 +63,8 @@ Only perform the following after confirming the desired Cloudflare account and W
    ```
 
    Generate the encryption key locally with `node -e "console.log(require('node:crypto').randomBytes(32).toString('base64url'))"` and store the output only as a Worker secret. Never commit it or paste it into source files. The app stores Canva access/refresh tokens encrypted in D1. The Canva workflow fills an existing video-capable brand template using its exact dataset field names and Canva video asset IDs; it does not create video footage or arbitrary timelines. The MP4 export is a user-triggered Canva API operation, and its download URLs expire after 24 hours.
-9. Adobe Express is an interactive editor, not a headless video API. Request Adobe business approval for the Embed SDK, create an Embed SDK project key, and allowlist the exact HTTPS app domain in Adobe Developer Console. After approval, configure `ADOBE_EXPRESS_EMBED_CLIENT_ID` and `APP_PUBLIC_ORIGIN` as Worker variables, with `APP_PUBLIC_ORIGIN` matching the full agent origin (scheme and host). Set `ADOBE_EXPRESS_EMBED_APPROVED=true` only after approval. Video actions remain disabled until all three checks pass; the owner chooses/uploads media and completes save/export in Adobe Express. Local HTTP does not satisfy this requirement.
-10. To use a paid LLM, separately approve the provider/account and a spend cap, then set the server-side values:
+8. Adobe Express is an interactive editor, not a headless video API. Request Adobe business approval for the Embed SDK, create an Embed SDK project key, and allowlist the exact HTTPS app domain in Adobe Developer Console. After approval, configure `ADOBE_EXPRESS_EMBED_CLIENT_ID` and `APP_PUBLIC_ORIGIN` as Worker variables, with `APP_PUBLIC_ORIGIN` matching the full agent origin (scheme and host). Set `ADOBE_EXPRESS_EMBED_APPROVED=true` only after approval. Video actions remain disabled until all three checks pass; the owner chooses/uploads media and completes save/export in Adobe Express. Local HTTP does not satisfy this requirement.
+9. To use a paid LLM, separately approve the provider/account and a spend cap, then set the server-side values:
 
    ```powershell
    npx wrangler secret put OPENAI_API_KEY
@@ -75,7 +74,9 @@ Only perform the following after confirming the desired Cloudflare account and W
    ```
 
    Check the provider's current official pricing before configuring rates. No key or price is supplied by this project. Keep `LLM_PROVIDER=mock` until these values are reviewed.
-11. Deploy with `npm run deploy`, then confirm the Worker URL is behind Cloudflare Access before sharing it. Keep the development auth bypass unset in production.
+10. Deploy with `npm run deploy`, then confirm the Worker URL is behind Cloudflare Access before sharing it. Keep the development auth bypass unset in production.
+
+This Phase 1 deployment intentionally has no R2 binding. Text drafts, approvals, jobs, and integration metadata are stored in D1; media creation/export remains disabled or handled by the connected external provider until an affordable object-storage option is selected. R2 is optional and should only be added when the owner approves its subscription and usage costs.
 
 Remote resource creation, LinkedIn app registration and product access, LinkedIn account authorization, Canva app registration and account authorization, Adobe business approval and key, secrets, and deployment require owner setup; they are not included or pre-configured.
 
