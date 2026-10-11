@@ -6,6 +6,7 @@
 !.dev.vars.example
 .continue/
 .wrangler/
+wrangler.toml
 .vscode/
 *.code-workspace
 node_modules/

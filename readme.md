@@ -28,12 +28,31 @@ The token needs permission to deploy to Pages. The Cloudflare Pages project shou
 - `business-websites.html` — business website service
 - `website-care.html` — ongoing website care service
 - `contact.html` — enquiry form and contact details
+- `client-login.html` — client portal login
+- `client-portal.html` — client dashboard for project tracking
 - `thanks.html` — post-submission page
 - `privacy.html` — privacy notice
 - `concept-demos.html` — interactive illustrative concept demos
 - `404.html` — styled not-found page
 
 Shared assets and behaviour live in `styles.css`, `selected-concepts.css`, `concept-demos.css`, `script.js` and `concept-demos.js`.
+
+## Client Portal
+
+The client portal allows clients to log in and view their project progress, milestones, and deliverables.
+
+### Setup
+
+See `docs/CLIENT_PORTAL_SETUP.md` for complete setup instructions including:
+
+- Creating the Cloudflare D1 database
+- Running database migrations
+- Configuring environment variables
+- Setting up D1 bindings in Cloudflare Pages
+
+### Admin API
+
+Admin endpoints for creating clients and projects are documented in `docs/ADMIN_API.md`.
 
 ## Enquiry Function
 
@@ -45,6 +64,7 @@ Required/optional environment variable names:
 - `WEB3FORMS_ACCESS_KEY` — required Web3Forms access key
 - `GOOGLE_SHEETS_WEBHOOK_URL` — optional Apps Script web app URL; used with the token below
 - `GOOGLE_SHEETS_WEBHOOK_TOKEN` — optional shared webhook token
+- `ADMIN_API_KEY` — required for admin API endpoints (client/project creation)
 
 Keep all values in Cloudflare Pages encrypted secrets or local ignored development files. Names are documented here; values must never be committed.
 
