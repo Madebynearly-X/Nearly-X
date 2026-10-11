@@ -1,7 +1,20 @@
+import {
+  buildLeadId,
+  createDedupeKey,
+  normalizePackage,
+  normalizeSource,
+  normalizeText,
+} from "../../lib/enquiry-validation.js";
+
 const JSON_HEADERS = {
   "Content-Type": "application/json; charset=utf-8",
   "Cache-Control": "no-store",
 };
+
+const DEDUPE_WINDOW_MS = 1000 * 60 * 15;
+const RATE_LIMIT_WINDOW_MS = 1000 * 60 * 15;
+const MAX_REQUESTS_PER_WINDOW = 6;
+const requestHistory = new Map();
 
 function json(body, status = 200) {
   return new Response(JSON.stringify(body), { status, headers: JSON_HEADERS });
@@ -11,6 +24,35 @@ function readField(data, name, maxLength) {
   const value = data[name];
   if (typeof value !== "string") return "";
   return value.trim().slice(0, maxLength);
+}
+
+function getRequestIdentifier(request) {
+  const forwardedFor = request.headers.get("CF-Connecting-IP") || request.headers.get("x-forwarded-for") || "unknown";
+  return forwardedFor.split(",")[0].trim() || "unknown";
+}
+
+function checkRateLimit(request, email) {
+  const identifier = `${getRequestIdentifier(request)}:${normalizeText(email, 254).toLowerCase()}`;
+  const now = Date.now();
+  const history = requestHistory.get(identifier) || [];
+  const recent = history.filter((timestamp) => now - timestamp < RATE_LIMIT_WINDOW_MS);
+  if (recent.length >= MAX_REQUESTS_PER_WINDOW) {
+    return false;
+  }
+  recent.push(now);
+  requestHistory.set(identifier, recent);
+  return true;
+}
+
+function checkDuplicateSubmission(fields) {
+  const dedupeKey = createDedupeKey(fields);
+  const now = Date.now();
+  const previous = requestHistory.get(`dedupe:${dedupeKey}`);
+  if (previous && now - previous < DEDUPE_WINDOW_MS) {
+    return false;
+  }
+  requestHistory.set(`dedupe:${dedupeKey}`, now);
+  return true;
 }
 
 async function recordEnquiryInGoogleSheet(env, fields, countryCode) {
@@ -174,6 +216,7 @@ export async function onRequestPost({ request, env }) {
     business: readField(data, "business", 160),
     package: readField(data, "package", 80),
     details: readField(data, "details", 5000),
+    source: readField(data, "source", 80),
   };
   const countryCode = readField(data, "country_code", 5);
 
@@ -185,8 +228,21 @@ export async function onRequestPost({ request, env }) {
     return json({ success: false, message: "Please enter a valid email address." }, 400);
   }
 
+  const normalizedPackage = normalizePackage(fields.package) || "not-sure";
+  const normalizedSource = normalizeSource(fields.source || "website");
+  fields.package = normalizedPackage;
+  fields.source = normalizedSource;
+
   if (fields.phone && !/^\+\d{1,3}$/.test(countryCode)) {
     return json({ success: false, message: "Please select a valid country calling code." }, 400);
+  }
+
+  if (!checkRateLimit(request, fields.email)) {
+    return json({ success: false, message: "Too many submissions have been sent from this address recently. Please email us directly." }, 429);
+  }
+
+  if (!checkDuplicateSubmission(fields)) {
+    return json({ success: false, message: "This enquiry looks like a duplicate of one we already received. Please allow a moment and try again or email us directly." }, 409);
   }
 
   if (!env.TURNSTILE_SECRET_KEY) {
@@ -216,6 +272,9 @@ export async function onRequestPost({ request, env }) {
     return json({ success: false, message: "The enquiry form is temporarily unavailable. Please email us directly." }, 503);
   }
 
+  const leadId = buildLeadId();
+  fields.lead_id = leadId;
+
   let providerResponse;
   try {
     providerResponse = await fetch("https://api.web3forms.com/submit", {
@@ -228,6 +287,9 @@ export async function onRequestPost({ request, env }) {
         replyto: fields.email,
         ...fields,
         phone: fields.phone ? `${countryCode} ${fields.phone}` : "",
+        source: fields.source,
+        package: fields.package,
+        lead_id: leadId,
       }),
     });
   } catch (error) {
