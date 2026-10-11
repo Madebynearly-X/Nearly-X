@@ -16,7 +16,7 @@ The `ADMIN_API_KEY` must be configured as a Cloudflare Pages secret.
 
 ### Create Client Account
 
-**POST** `/api/admin/create-client`
+**POST** `/api/create-client`
 
 Create a new client account with login credentials.
 
@@ -52,7 +52,7 @@ Create a new client account with login credentials.
 
 ### Create Project
 
-**POST** `/api/admin/create-project`
+**POST** `/api/create-project`
 
 Create a new project for an existing client.
 
@@ -91,7 +91,7 @@ Create a new project for an existing client.
 
 ```bash
 # Create a client
-curl -X POST https://nearly-x.pages.dev/api/admin/create-client \
+curl -X POST https://nearly-x.pages.dev/api/create-client \
   -H "Authorization: Bearer YOUR_ADMIN_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{
@@ -102,7 +102,7 @@ curl -X POST https://nearly-x.pages.dev/api/admin/create-client \
   }'
 
 # Create a project
-curl -X POST https://nearly-x.pages.dev/api/admin/create-project \
+curl -X POST https://nearly-x.pages.dev/api/create-project \
   -H "Authorization: Bearer YOUR_ADMIN_API_KEY" \
   -H "Content-Type: application/json" \
   -d '{

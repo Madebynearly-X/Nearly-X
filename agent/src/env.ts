@@ -23,6 +23,7 @@ export type Env = {
   ADOBE_EXPRESS_EMBED_CLIENT_ID?: string;
   ADOBE_EXPRESS_EMBED_APPROVED?: string;
   APP_PUBLIC_ORIGIN?: string;
+  ADMIN_API_KEY?: string;
 };
 
 export type AppEnv = {

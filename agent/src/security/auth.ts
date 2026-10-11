@@ -63,3 +63,11 @@ export const requireOwner = createMiddleware<AppEnv>(async (c, next) => {
   }
   return next();
 });
+
+export const requireAdminApiKey = createMiddleware<AppEnv>(async (c, next) => {
+  const apiKey = c.req.header("X-Admin-Api-Key");
+  if (!c.env.ADMIN_API_KEY || apiKey !== c.env.ADMIN_API_KEY) {
+    return c.json({ error: "Unauthorized: Invalid or missing API key." }, 401);
+  }
+  return next();
+});
