@@ -239,6 +239,68 @@
     phone.setAttribute("placeholder", "Phone number");
   }
 
+  const packageField = form.querySelector("#q-package");
+  const sourceField = form.querySelector("#q-source");
+  const query = new URLSearchParams(window.location.search);
+
+  const normalizePackageValue = (value) => {
+    if (typeof value !== "string") return "";
+    const normalized = value.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+    if (["landing-page", "starter-website", "business-website", "care-plan", "not-sure"].includes(normalized)) {
+      return normalized;
+    }
+    const map = {
+      landing: "landing-page",
+      landingpage: "landing-page",
+      starter: "starter-website",
+      business: "business-website",
+      care: "care-plan",
+      "website-care": "care-plan",
+      "not-sure-yet": "not-sure",
+      unsure: "not-sure",
+      "talk-it-through": "not-sure",
+    };
+    return map[normalized] || "";
+  };
+
+  const normalizeSourceValue = (value) => {
+    if (typeof value !== "string") return "website";
+    const normalized = value.trim().toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/-+/g, "-").replace(/^-|-$/g, "");
+    const map = {
+      website: "website",
+      google: "google",
+      referral: "referral",
+      linkedin: "linkedin",
+      whatsapp: "whatsapp",
+      instagram: "instagram",
+      facebook: "facebook",
+      email: "email",
+      other: "other",
+      "google-search": "google",
+      "googleads": "google",
+      "word-of-mouth": "referral",
+      wa: "whatsapp",
+      ig: "instagram",
+      fb: "facebook",
+      mail: "email",
+    };
+    return map[normalized] || "other";
+  };
+
+  const requestedPackage = normalizePackageValue(
+    query.get("package") || query.get("service") || query.get("offer") || "",
+  );
+  if (packageField && requestedPackage) {
+    packageField.value = requestedPackage;
+  }
+
+  const requestedSource = normalizeSourceValue(
+    query.get("source") || query.get("utm_source") || query.get("ref") || "website",
+  );
+  if (sourceField) {
+    sourceField.value = requestedSource;
+  }
+
   const submit = form.querySelector('button[type="submit"]');
   const summary = form.querySelector("[data-error-summary]");
   const list = form.querySelector("[data-error-list]");

@@ -1,10 +1,12 @@
 const LEAD_HEADERS = [
+  "lead_id",
   "received_at",
   "name",
   "email",
   "phone",
   "business",
   "package",
+  "source",
   "details",
   "status",
   "last_contacted",
@@ -95,6 +97,115 @@ function prepareLeadSheet(sheet) {
   return headerMap;
 }
 
+function getLeadSheet() {
+  const properties = PropertiesService.getScriptProperties();
+  const spreadsheetId = properties.getProperty("SPREADSHEET_ID");
+  if (!spreadsheetId) {
+    return null;
+  }
+
+  const spreadsheet = SpreadsheetApp.openById(spreadsheetId);
+  const sheet = spreadsheet.getSheetByName("Leads");
+  return sheet;
+}
+
+function getLeadSummary() {
+  const sheet = getLeadSheet();
+  if (!sheet) {
+    return { success: false, message: "Leads sheet not configured." };
+  }
+
+  const values = sheet.getDataRange().getValues();
+  if (values.length < 2) {
+    return {
+      success: true,
+      summary: {
+        total: 0,
+        new: 0,
+        awaiting_response: 0,
+        overdue_follow_up: 0,
+        status_counts: {},
+        package_counts: {},
+        source_counts: {},
+        generated_at: new Date().toISOString(),
+      },
+      leads: [],
+      generated_at: new Date().toISOString(),
+    };
+  }
+
+  const headers = values[0].map((value) => String(value).trim());
+  const rows = values.slice(1).filter((row) => row.some((cell) => String(cell ?? "").trim() !== ""));
+  const leads = rows.map((row) => {
+    const record = {};
+    headers.forEach((header, index) => {
+      record[header] = row[index] ?? "";
+    });
+    return record;
+  });
+
+  const statusCounts = {};
+  const packageCounts = {};
+  const sourceCounts = {};
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+
+  leads.forEach((lead) => {
+    const status = String(lead.status || "New").trim() || "New";
+    const packageName = String(lead.package || "not-sure").trim() || "not-sure";
+    const source = String(lead.source || "website").trim() || "website";
+    statusCounts[status] = (statusCounts[status] || 0) + 1;
+    packageCounts[packageName] = (packageCounts[packageName] || 0) + 1;
+    sourceCounts[source] = (sourceCounts[source] || 0) + 1;
+  });
+
+  const awaitingResponse = leads.filter((lead) => {
+    const status = String(lead.status || "New").trim() || "New";
+    return ["New", "Contacted"].includes(status);
+  }).length;
+
+  const overdueFollowUp = leads.filter((lead) => {
+    const status = String(lead.status || "New").trim() || "New";
+    if (["Won", "Lost"].includes(status)) return false;
+    const followUpDate = lead.follow_up_date ? new Date(lead.follow_up_date) : null;
+    if (!followUpDate || Number.isNaN(followUpDate.getTime())) return false;
+    return followUpDate < today;
+  }).length;
+
+  return {
+    success: true,
+    summary: {
+      total: leads.length,
+      new: statusCounts.New || 0,
+      awaiting_response: awaitingResponse,
+      overdue_follow_up: overdueFollowUp,
+      status_counts: statusCounts,
+      package_counts: packageCounts,
+      source_counts: sourceCounts,
+      generated_at: new Date().toISOString(),
+    },
+    leads: leads.slice().sort((a, b) => (b.received_at || "") > (a.received_at || "") ? 1 : -1).slice(0, 20),
+    generated_at: new Date().toISOString(),
+  };
+}
+
+function doGet(event) {
+  const properties = PropertiesService.getScriptProperties();
+  const expectedToken = properties.getProperty("WEBHOOK_TOKEN");
+  const receivedToken = event && event.parameter ? event.parameter.token : "";
+  if (!expectedToken || receivedToken !== expectedToken) {
+    return jsonResponse({ success: false, message: "Unauthorized." });
+  }
+
+  const action = event && event.parameter ? String(event.parameter.action || "summary") : "summary";
+  if (action !== "summary") {
+    return jsonResponse({ success: false, message: "Unsupported action." });
+  }
+
+  const leadSummary = getLeadSummary();
+  return jsonResponse(leadSummary);
+}
+
 function doPost(event) {
   const properties = PropertiesService.getScriptProperties();
   const expectedToken = properties.getProperty("WEBHOOK_TOKEN");
@@ -131,12 +242,14 @@ function doPost(event) {
     try {
       const headerMap = prepareLeadSheet(sheet);
       const lead = {
+        lead_id: data.lead_id || `lead-${Date.now()}`,
         received_at: data.received_at,
         name: data.name,
         email: data.email,
         phone: data.phone,
         business: data.business,
-        package: data.package,
+        package: data.package || "not-sure",
+        source: data.source || "website",
         details: data.details,
         status: "New",
         last_contacted: "",

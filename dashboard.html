@@ -1,0 +1,256 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Lead dashboard | NEARLY Studio</title>
+  <meta name="description" content="Lead overview for NEARLY Studio enquiries and follow-up status.">
+  <meta name="robots" content="noindex, nofollow">
+  <meta property="og:title" content="Lead dashboard | NEARLY Studio">
+  <meta property="og:description" content="Track new enquiries, follow-up dates and lead status in one place.">
+  <meta property="og:url" content="https://nearly-x.pages.dev/dashboard.html">
+  <link rel="canonical" href="https://nearly-x.pages.dev/dashboard.html">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <style>
+    .dashboard-wrap { display: grid; gap: 1.25rem; }
+    .stats-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 1rem; }
+    .stat-card { background: #fff; border: 1px solid rgba(15, 23, 42, 0.08); border-radius: 18px; padding: 1rem; box-shadow: 0 10px 30px rgba(15, 23, 42, 0.03); }
+    .stat-label { display: block; font-size: 0.78rem; letter-spacing: 0.12em; text-transform: uppercase; color: #5d6470; margin-bottom: 0.5rem; }
+    .stat-value { font-size: clamp(1.8rem, 3vw, 2.5rem); font-weight: 700; color: #111827; }
+    .lead-table { width: 100%; border-collapse: collapse; margin-top: 1rem; }
+    .lead-table th, .lead-table td { text-align: left; padding: 0.8rem 0.75rem; border-bottom: 1px solid #e5e7eb; vertical-align: top; }
+    .lead-table th { font-size: 0.75rem; letter-spacing: 0.08em; text-transform: uppercase; color: #5d6470; }
+    .status-pill { display: inline-flex; align-items: center; border-radius: 999px; font-size: 0.72rem; padding: 0.38rem 0.7rem; font-weight: 600; }
+    .status-new { background: #e0f2fe; color: #075985; }
+    .status-contacted { background: #ede9fe; color: #5b21b6; }
+    .status-qualified { background: #dcfce7; color: #166534; }
+    .status-proposal { background: #fef3c7; color: #92400e; }
+    .status-won { background: #dcfce7; color: #166534; }
+    .status-lost { background: #fee2e2; color: #991b1b; }
+    .empty-state { padding: 1.4rem; border: 1px dashed rgba(15,23,42,0.2); border-radius: 16px; background: rgba(148,163,184,0.03); }
+    @media (max-width: 700px) { .lead-table { display: block; overflow-x: auto; } }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html" aria-label="NEARLY Studio home"><span class="brand-mark">N.</span><span>NEARLY <small>Studio</small></span></a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-nav-toggle aria-label="Open navigation menu">☰</button>
+      <nav class="nav-links" id="nav-links" data-nav aria-label="Main navigation">
+        <a href="landing-pages.html">Landing pages</a>
+        <a href="business-websites.html">Business websites</a>
+        <a href="website-care.html">Website care</a>
+        <a href="index.html#work">Selected concepts</a>
+        <a class="button" href="contact.html">Tell us about your project</a>
+      </nav>
+    </div>
+  </header>
+
+  <main id="main" tabindex="-1">
+    <section class="page-hero container">
+      <span class="page-kicker"><i></i> Daily lead view</span>
+      <h1>Lead dashboard</h1>
+      <p class="intro">A live summary of new enquiries, follow-ups due and the current pipeline.</p>
+    </section>
+
+    <section class="section section--white">
+      <div class="container dashboard-wrap">
+        <div id="dashboard-status" class="empty-state" aria-live="polite">
+          Loading live lead data…
+        </div>
+
+        <div class="stats-grid" aria-live="polite">
+          <article class="stat-card">
+            <span class="stat-label">Total leads</span>
+            <strong class="stat-value" data-stat="total">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">New</span>
+            <strong class="stat-value" data-stat="new">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Awaiting reply</span>
+            <strong class="stat-value" data-stat="awaiting">0</strong>
+          </article>
+          <article class="stat-card">
+            <span class="stat-label">Overdue</span>
+            <strong class="stat-value" data-stat="overdue">0</strong>
+          </article>
+        </div>
+
+        <div class="section-head" style="margin-top:0.5rem;">
+          <p class="eyebrow">Pipeline snapshot</p>
+          <h2>Current lead status</h2>
+        </div>
+
+        <div id="status-breakdown" class="stats-grid" aria-live="polite"></div>
+
+        <div class="section-head" style="margin-top:0.75rem;">
+          <p class="eyebrow">Recent enquiries</p>
+          <h2>Most recent leads</h2>
+        </div>
+
+        <div style="overflow-x:auto;">
+          <table class="lead-table">
+            <thead>
+              <tr>
+                <th>Name</th>
+                <th>Business</th>
+                <th>Package</th>
+                <th>Source</th>
+                <th>Status</th>
+                <th>Next touch</th>
+                <th>Received</th>
+              </tr>
+            </thead>
+            <tbody id="lead-table-body"></tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-top">
+        <div>
+          <a class="brand" href="index.html"><span class="brand-mark">N.</span><span>NEARLY <small>Studio</small></span></a>
+          <p class="footer-tagline">Good work deserves<br>to be seen.</p>
+        </div>
+        <div class="footer-links">
+          <div><strong>Explore</strong><a href="landing-pages.html">Landing pages</a><a href="business-websites.html">Business websites</a><a href="website-care.html">Website care</a></div>
+          <div><strong>NEARLY</strong><a href="index.html#work">Selected concepts</a><a href="index.html#approach">Our approach</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy notice</a></div>
+          <div><strong>Say hello</strong><a href="mailto:madebynearly@gmail.com">Email NEARLY ↗</a><a href="https://wa.me/27783940421">WhatsApp ↗</a><span>South Africa · Working worldwide</span></div>
+        </div>
+      </div>
+      <div class="footer-bottom"><p>© <span data-year></span> NEARLY Studio. Made with intention.</p><p>Independent web design · South Africa-based, working worldwide</p></div>
+    </div>
+  </footer>
+
+  <script src="script.js" defer></script>
+  <script>
+    (() => {
+      const statusMap = {
+        New: "status-new",
+        Contacted: "status-contacted",
+        Qualified: "status-qualified",
+        "Proposal sent": "status-proposal",
+        Won: "status-won",
+        Lost: "status-lost",
+      };
+
+      const statusNode = document.querySelector("#dashboard-status");
+      const summaryNode = document.querySelector("#status-breakdown");
+      const tableBody = document.querySelector("#lead-table-body");
+      const statEls = {
+        total: document.querySelector('[data-stat="total"]'),
+        new: document.querySelector('[data-stat="new"]'),
+        awaiting: document.querySelector('[data-stat="awaiting"]'),
+        overdue: document.querySelector('[data-stat="overdue"]'),
+      };
+
+      function escapeHtml(value) {
+        return String(value ?? "").replace(/[&<>"']/g, (character) => ({
+          "&": "&amp;",
+          "<": "&lt;",
+          ">": "&gt;",
+          '"': "&quot;",
+          "'": "&#39;",
+        })[character]);
+      }
+
+      function formatDate(value) {
+        if (!value) return "—";
+        const date = new Date(value);
+        if (Number.isNaN(date.getTime())) return escapeHtml(value);
+        return date.toLocaleDateString("en-ZA", { day: "2-digit", month: "short", year: "numeric" });
+      }
+
+      function renderStatusBreakdown(summary) {
+        if (!summary || !summary.status_counts || Object.keys(summary.status_counts).length === 0) {
+          summaryNode.innerHTML = '<div class="empty-state">No lead status data yet.</div>';
+          return;
+        }
+
+        const statuses = Object.entries(summary.status_counts)
+          .sort((a, b) => b[1] - a[1]);
+
+        summaryNode.innerHTML = statuses.map(([status, count]) => `
+          <article class="stat-card">
+            <span class="stat-label">${escapeHtml(status)}</span>
+            <strong class="stat-value">${escapeHtml(count)}</strong>
+          </article>
+        `).join("");
+      }
+
+      function renderRows(leads) {
+        if (!Array.isArray(leads) || leads.length === 0) {
+          tableBody.innerHTML = '<tr><td colspan="7"><div class="empty-state">No live lead rows yet. Once the first enquiry arrives, it will appear here.</div></td></tr>';
+          return;
+        }
+
+        tableBody.innerHTML = leads.slice(0, 12).map((lead) => {
+          const status = lead.status || "New";
+          const className = Object.prototype.hasOwnProperty.call(statusMap, status) ? statusMap[status] : "status-new";
+          return `
+            <tr>
+              <td>${escapeHtml(lead.name || "Unnamed lead")}</td>
+              <td>${escapeHtml(lead.business || "—")}</td>
+              <td>${escapeHtml(lead.package || "Not sure")}</td>
+              <td>${escapeHtml(lead.source || "website")}</td>
+              <td><span class="status-pill ${className}">${escapeHtml(status)}</span></td>
+              <td>${formatDate(lead.follow_up_date || lead.last_contacted)}</td>
+              <td>${formatDate(lead.received_at)}</td>
+            </tr>
+          `;
+        }).join("");
+      }
+
+      async function loadDashboard() {
+        if (window.location.protocol === "file:") {
+          statusNode.textContent = "This dashboard must be viewed from the deployed Cloudflare Pages site so the /api/leads-summary endpoint exists.";
+          statusNode.className = "empty-state";
+          tableBody.innerHTML = '<tr><td colspan="7"><div class="empty-state">Open this page from the Pages preview or production domain to load live lead data.</div></td></tr>';
+          summaryNode.innerHTML = '<div class="empty-state">Live data is unavailable when the page is opened directly from disk.</div>';
+          return;
+        }
+
+        try {
+          const response = await fetch("/api/leads-summary", { headers: { Accept: "application/json" } });
+          const contentType = response.headers.get("content-type") || "";
+          const isJsonResponse = contentType.includes("application/json");
+          const result = isJsonResponse ? await response.json() : null;
+
+          if (!response.ok || !result || result.success !== true) {
+            const fallbackMessage = isJsonResponse
+              ? (result && result.message) || "The lead dashboard is unavailable right now."
+              : "The lead dashboard endpoint is not available on this deployment yet.";
+            statusNode.textContent = fallbackMessage;
+            statusNode.className = "empty-state";
+            return;
+          }
+
+          const summary = result.summary || {};
+          statEls.total.textContent = summary.total || 0;
+          statEls.new.textContent = summary.new || 0;
+          statEls.awaiting.textContent = summary.awaiting_response || 0;
+          statEls.overdue.textContent = summary.overdue_follow_up || 0;
+
+          renderStatusBreakdown(summary);
+          renderRows(result.leads || []);
+          statusNode.textContent = summary.generated_at ? `Dashboard refreshed ${formatDate(summary.generated_at)}` : "Live lead data is available.";
+          statusNode.className = "empty-state";
+        } catch (error) {
+          statusNode.textContent = "The lead dashboard could not load right now. Please check the Google Sheets endpoint and Cloudflare settings.";
+          statusNode.className = "empty-state";
+          console.error(error);
+        }
+      }
+
+      loadDashboard();
+    })();
+  </script>
+</body>
+</html>

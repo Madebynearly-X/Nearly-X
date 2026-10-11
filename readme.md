@@ -19,8 +19,10 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 - `_headers` — Cloudflare Pages security headers and Content Security Policy
 - `script.js` — mobile navigation, reveal-on-scroll, year and form validation/submission
 - `contact-form.js` — enquiry submission and international phone country-code picker; country flags load as Twemoji SVGs from cdnjs
-- `functions/api/enquiry.js` — server-side Web3Forms delivery and optional authenticated Google Sheets lead recording
-- `scripts/google-sheets-webhook.gs` — Google Apps Script endpoint that records leads and maintains the Sheet's follow-up pipeline
+- `functions/api/enquiry.js` — server-side Web3Forms delivery, enquiry validation, rate limiting and optional authenticated Google Sheets lead recording
+- `functions/api/leads-summary.js` — Cloudflare Access-authenticated lead summary endpoint for the operations dashboard
+- `dashboard.html` — private operations dashboard showing pipeline status and due follow-ups
+- `scripts/google-sheets-webhook.gs` — Google Apps Script endpoint that records leads, exposes dashboard data and maintains the Sheet's follow-up pipeline
 
 ## Before publishing
 1. Confirm prices, timelines, included deliverables, revision limits and care plan terms.
@@ -48,6 +50,23 @@ Turnstile is provided at no cost by Cloudflare under its current service terms. 
 ## Security and cookies
 
 The site does not use advertising or analytics cookies or a cookie-preference store, so it does not need a consent banner for those purposes. Turnstile may use strictly necessary security cookies or similar signals; these are described in the privacy notice. `_headers` applies a restrictive Content Security Policy, clickjacking protection, MIME sniffing protection, a referrer policy, a permissions policy, and HSTS on Cloudflare Pages. Review the CSP whenever adding scripts, fonts, images, or other third-party services.
+
+## Protecting the lead dashboard
+
+The dashboard is not linked from the public navigation or sitemap and is marked `noindex`, but those measures are not access control. Protect both the dashboard page and its API with Cloudflare Access. The API also validates Access JWT signatures itself, returns only fields rendered in the dashboard, and fails closed if its Access configuration is missing or invalid.
+
+1. In Cloudflare Zero Trust, enable **Email one-time PIN** as an identity provider.
+2. In **Workers & Pages → nearly-x → Settings → Preview access**, restrict preview deployments so unmerged dashboard previews are not publicly available.
+3. Protect the production Pages hostname `nearly-x.pages.dev` in Zero Trust. Cloudflare requires enabling the Pages preview access policy first; follow its [instructions for enabling Access on a Pages `*.pages.dev` domain](https://developers.cloudflare.com/pages/platform/known-issues/#enable-access-on-your-pagesdev-domain). Keep the Access applications path-scoped to `/dashboard.html` and `/api/leads-summary`; do not put the public website behind login. See Cloudflare's [path-scoped application guide](https://developers.cloudflare.com/cloudflare-one/access-controls/policies/app-paths/).
+4. Create an **Allow** policy for each application that includes only `madebynearly@gmail.com`. Do not use an `Everyone` policy.
+5. Copy the API application's **Application Audience (AUD) Tag** and your Zero Trust team domain (for example, `your-team.cloudflareaccess.com`).
+6. Before merging the dashboard to production, add Production variables to **Workers & Pages → nearly-x → Settings → Variables and Secrets**:
+   - `CF_ACCESS_TEAM_DOMAIN` — team domain only, without `https://`.
+   - `CF_ACCESS_AUD` — audience tag for the `/api/leads-summary` application.
+   Keep the Sheets webhook URL and token as encrypted secrets. Add equivalent Preview variables only if the preview host is covered by an Access app that forwards the Access JWT.
+7. Deploy only after both path policies and variables are configured. Verify signed-out requests are blocked for the page and API; verify the approved email can sign in and load the dashboard. Repeat for every hostname.
+
+The API does not send lead email addresses, phone numbers, enquiry details, or internal notes to the browser. It limits returned lead fields and the dashboard HTML-escapes displayed values. The static dashboard page must have its Cloudflare Access application in place before it is deployed if the empty page shell should not be public.
 
 ## Optional: record enquiries in Google Sheets at no hosting cost
 
