@@ -1,0 +1,162 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f5f7">
+  <title>Nearly Agent | NEARLY Studio</title>
+  <link rel="icon" href="/icon.svg" type="image/svg+xml">
+  <link rel="apple-touch-icon" href="/icon.svg">
+  <link rel="stylesheet" href="/app.css">
+  <script src="/app.js" defer></script>
+</head>
+<body>
+  <svg class="icon-library" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+    <symbol id="icon-overview" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="3.5" width="7" height="7" rx="1.5"/><rect x="3.5" y="13.5" width="7" height="7" rx="1.5"/><rect x="13.5" y="13.5" width="7" height="7" rx="1.5"/></symbol>
+    <symbol id="icon-studio" viewBox="0 0 24 24"><path d="m12 3 1.7 5.3L19 10l-5.3 1.7L12 17l-1.7-5.3L5 10l5.3-1.7L12 3Z"/><path d="m19 15 .8 2.2L22 18l-2.2.8L19 21l-.8-2.2L16 18l2.2-.8L19 15Z"/></symbol>
+    <symbol id="icon-calendar" viewBox="0 0 24 24"><rect x="3.5" y="5" width="17" height="15.5" rx="2"/><path d="M7.5 3v4M16.5 3v4M3.5 9.5h17M8 13h.01M12 13h.01M16 13h.01M8 16.5h.01M12 16.5h.01"/></symbol>
+    <symbol id="icon-integrations" viewBox="0 0 24 24"><circle cx="6" cy="12" r="2.5"/><circle cx="18" cy="6" r="2.5"/><circle cx="18" cy="18" r="2.5"/><path d="m8.2 10.9 7.5-3.8M8.2 13.1l7.5 3.8"/></symbol>
+    <symbol id="icon-settings" viewBox="0 0 24 24"><path d="M4 7h7m4 0h5M4 17h3m4 0h9"/><circle cx="13" cy="7" r="2"/><circle cx="9" cy="17" r="2"/></symbol>
+    <symbol id="icon-activity" viewBox="0 0 24 24"><path d="M3 12h4l3-8 4 16 3-8h4"/></symbol>
+    <symbol id="icon-instagram" viewBox="0 0 24 24"><rect x="3.5" y="3.5" width="17" height="17" rx="5"/><circle cx="12" cy="12" r="4"/><path d="M17.6 6.5h.01"/></symbol>
+    <symbol id="icon-facebook" viewBox="0 0 24 24"><path d="M14.2 21v-8h2.7l.4-3.1h-3.1v-2c0-.9.3-1.5 1.6-1.5h1.7V3.6c-.3 0-1.3-.1-2.5-.1-2.5 0-4.2 1.5-4.2 4.3v2.1H8v3.1h2.8v8"/></symbol>
+    <symbol id="icon-linkedin" viewBox="0 0 24 24"><path d="M5 9v10M5 5.5v.1M10 19v-5.5c0-2 1.1-3.2 2.9-3.2s2.9 1.2 2.9 3.2V19M10 10.5V19M3.5 3.5h17v17h-17z"/></symbol>
+    <symbol id="icon-tiktok" viewBox="0 0 24 24"><path d="M14 4v10.2a3.8 3.8 0 1 1-3-3.7M14 4c.6 2.7 2.3 4.3 5 4.7"/></symbol>
+    <symbol id="icon-canva" viewBox="0 0 24 24"><circle cx="12" cy="12" r="9"/><path d="M15.7 8.4a4.1 4.1 0 1 0 0 7.2"/></symbol>
+    <symbol id="icon-adobe" viewBox="0 0 24 24"><path d="M3.5 19.5 10.3 4.5h3.4l6.8 15h-4.1L12 8.7l-4.4 10.8z"/><path d="M10 15.5h5.5"/></symbol>
+  </svg>
+  <a class="skip" href="#main">Skip to content</a>
+  <aside class="sidebar">
+    <a class="brand" href="/" aria-label="NEARLY Studio agent home"><span class="mark">N.</span><span>NEARLY <small>Agent</small></span></a>
+    <nav aria-label="Dashboard">
+      <button class="nav-item active" data-page="overview"><svg class="icon" aria-hidden="true"><use href="#icon-overview"></use></svg><span>Overview</span></button>
+      <button class="nav-item" data-page="studio"><svg class="icon" aria-hidden="true"><use href="#icon-studio"></use></svg><span>Content Studio</span></button>
+      <button class="nav-item" data-page="calendar"><svg class="icon" aria-hidden="true"><use href="#icon-calendar"></use></svg><span>Calendar</span></button>
+      <button class="nav-item" data-page="integrations"><svg class="icon" aria-hidden="true"><use href="#icon-integrations"></use></svg><span>Integrations</span></button>
+      <button class="nav-item" data-page="settings"><svg class="icon" aria-hidden="true"><use href="#icon-settings"></use></svg><span>Settings</span></button>
+      <button class="nav-item" data-page="activity"><svg class="icon" aria-hidden="true"><use href="#icon-activity"></use></svg><span>Activity Log</span></button>
+    </nav>
+    <p class="sidebar-note">Supervised by default.<br>Nothing publishes without owner approval.</p>
+  </aside>
+  <main id="main">
+    <header class="topbar">
+      <div><p class="eyebrow">NEARLY STUDIO / MARKETING OPERATIONS</p><h1 id="page-title">Overview</h1></div>
+      <button class="pause-button" id="pause-control" type="button">Emergency pause</button>
+    </header>
+    <p class="notice" id="notice" role="status" hidden></p>
+    <section class="page visible" id="page-overview">
+      <div class="welcome card">
+        <p class="eyebrow">A clear view of what's ready</p>
+        <h2>Good work deserves to be seen.</h2>
+        <p>Prepare platform-specific content, review drafts, and publish approved LinkedIn text posts. Other social publishing and live analytics are not configured.</p>
+        <button class="primary" data-open-page="studio">Create a draft</button>
+      </div>
+      <div class="grid two">
+        <article class="card"><p class="eyebrow">Content</p><h3 id="overview-content-count">No content yet</h3><p>Draft and approval status will appear here when items are created.</p></article>
+        <article class="card"><p class="eyebrow">Connections</p><h3>No social accounts connected</h3><p>Integrations remain disconnected until their official setup and credentials are verified.</p></article>
+      </div>
+    </section>
+    <section class="page" id="page-studio">
+      <div class="card">
+        <p class="eyebrow">CONTENT STUDIO</p><h2>Start with a useful idea.</h2>
+        <form id="generate-form" class="form-grid">
+          <label class="wide">Brief<textarea name="brief" minlength="10" maxlength="3000" required placeholder="What useful idea should this content help a business owner understand?"></textarea></label>
+          <label>Content pillar<input name="pillar" required value="Web design education for business owners"></label>
+          <label>Objective<input name="objective" required value="Help the right business owners understand their online presence"></label>
+          <label class="wide">Destination URL<input name="destinationUrl" type="url" required value="https://nearly-x.pages.dev/"></label>
+          <fieldset class="wide platforms"><legend>Target platforms</legend>
+            <label><input type="checkbox" name="platform" value="instagram" checked><svg class="platform-icon instagram" aria-hidden="true"><use href="#icon-instagram"></use></svg> Instagram</label>
+            <label><input type="checkbox" name="platform" value="facebook"><svg class="platform-icon facebook" aria-hidden="true"><use href="#icon-facebook"></use></svg> Facebook</label>
+            <label><input type="checkbox" name="platform" value="linkedin" checked><svg class="platform-icon linkedin" aria-hidden="true"><use href="#icon-linkedin"></use></svg> LinkedIn</label>
+            <label><input type="checkbox" name="platform" value="tiktok"><svg class="platform-icon tiktok" aria-hidden="true"><use href="#icon-tiktok"></use></svg> TikTok</label>
+          </fieldset>
+          <p class="muted wide">Generated drafts are not live posts. Each requires owner approval before export.</p>
+          <button class="primary wide" type="submit">Generate platform drafts</button>
+        </form>
+      </div>
+      <div id="content-list" class="stack" aria-live="polite"></div>
+    </section>
+    <section class="page" id="page-calendar">
+      <div class="card"><p class="eyebrow">CALENDAR</p><h2>Planned content</h2><p class="muted">No publishing schedule is connected. Items appear here only when a planned time has been set.</p></div>
+      <div id="calendar-list" class="stack"></div>
+    </section>
+    <section class="page" id="page-integrations">
+      <div class="card"><p class="eyebrow">INTEGRATIONS</p><h2>Connected tools and capabilities.</h2><p class="muted">Account connections are shown separately from capabilities verified against official documentation.</p></div>
+      <article class="card video-tool">
+        <p class="eyebrow">LINKEDIN / TEXT-ONLY MEMBER POSTS</p><h2>Connect LinkedIn.</h2>
+        <p class="muted" id="linkedin-connection-detail">Connect an owner-authorized LinkedIn member account to publish reviewed text posts. Company pages and media posts are not included.</p>
+        <div class="actions">
+          <button class="primary" id="linkedin-connect" type="button">Connect LinkedIn</button>
+          <button class="quiet" id="linkedin-disconnect" type="button" hidden>Disconnect LinkedIn</button>
+        </div>
+        <p class="muted">Only approved LinkedIn drafts can be published. Public posts cannot be undone from this dashboard; use the emergency pause to stop new publish requests. Disconnecting removes the stored token here; revoke app access separately in LinkedIn if needed.</p>
+      </article>
+      <section class="grid two video-tools" aria-label="Video creation tools">
+        <article class="card video-tool">
+          <p class="eyebrow">CANVA / VIDEO TEMPLATE WORKFLOW</p><h2>Create from your Canva template.</h2>
+          <p class="muted" id="canva-connection-detail">Connect your Canva account to fill an existing video-capable brand template and export an MP4.</p>
+          <div class="actions">
+            <button class="primary" id="canva-connect" type="button">Connect Canva</button>
+            <button class="quiet" id="canva-disconnect" type="button" hidden>Disconnect Canva</button>
+          </div>
+          <form id="canva-video-form" class="form-grid video-form" hidden>
+            <label class="wide">Canva brand template ID<input name="brandTemplateId" required maxlength="200" placeholder="Your video-capable Canva brand template ID"></label>
+            <label class="wide">Template data (JSON)<textarea name="data" rows="6" required spellcheck="false" placeholder='{"headline":{"type":"text","text":"A clear headline"},"video":{"type":"video","asset_id":"YOUR_CANVA_VIDEO_ASSET_ID"}}'></textarea></label>
+            <p class="muted wide">The template and video asset must already exist in your Canva account. Use exact field names from its autofill dataset. Canva creates a new filled design; review it in Canva before exporting.</p>
+            <button class="primary wide" type="submit">Create video design</button>
+          </form>
+          <div id="canva-video-jobs" class="stack" aria-live="polite"></div>
+        </article>
+        <article class="card video-tool">
+          <p class="eyebrow">ADOBE EXPRESS / VIDEO EDITOR</p><h2>Edit with Adobe Express.</h2>
+          <p class="muted" id="adobe-connection-detail">The interactive editor needs Adobe business approval, an HTTPS app domain, and an approved Embed SDK client ID.</p>
+          <div class="actions adobe-actions">
+            <button class="quiet" type="button" data-adobe-action="mergeVideos" disabled>Merge videos</button>
+            <button class="quiet" type="button" data-adobe-action="trimVideo" disabled>Trim video</button>
+            <button class="quiet" type="button" data-adobe-action="captionVideo" disabled>Add captions</button>
+            <button class="quiet" type="button" data-adobe-action="convertToMP4" disabled>Convert to MP4</button>
+          </div>
+          <p class="muted">Adobe's editor is interactive: you select or upload the source media and save/export from Express.</p>
+        </article>
+      </section>
+      <div id="integration-list" class="grid two"></div>
+    </section>
+    <section class="page" id="page-settings">
+      <div class="card">
+        <p class="eyebrow">OPERATING CONTROLS</p><h2>Keep the owner in control.</h2>
+        <form id="settings-form" class="form-grid">
+          <label>Operating mode<select name="operatingMode"><option value="SAFE">A — Safe</option><option value="SUPERVISED">B — Supervised</option><option value="AUTONOMOUS">C — Autonomous (publishing still approval-gated in Phase 1)</option></select></label>
+          <label>Daily model spend cap (USD)<input type="number" name="dailySpendCapUsd" min="0" step="0.01"></label>
+          <label>Monthly model spend cap (USD)<input type="number" name="monthlySpendCapUsd" min="0" step="0.01"></label>
+          <label class="wide">Owner-authorised promotional claims (one exact claim per line)<textarea name="authorizedPromotionalClaims" rows="3" placeholder="Only add claims that the owner has explicitly approved"></textarea></label>
+          <label>Platform approval overrides (JSON)<textarea name="platformApprovalOverrides" rows="3" spellcheck="false" placeholder='{"instagram":true}'></textarea></label>
+          <label>Category approval overrides (JSON)<textarea name="categoryApprovalOverrides" rows="3" spellcheck="false" placeholder='{"education":true}'></textarea></label>
+          <button class="primary wide" type="submit">Save operating controls</button>
+        </form>
+      </div>
+      <div class="card">
+        <p class="eyebrow">BRAND PROFILE</p><h2>Verified starting profile</h2>
+        <p class="muted">Unknown details stay marked for owner input. Saving creates a new version.</p>
+        <form id="brand-form"><label>Profile JSON<textarea name="profile" rows="14" spellcheck="false"></textarea></label><label>Needs owner input (one per line)<textarea name="needsOwnerInput" rows="4"></textarea></label><button class="primary" type="submit">Save new version</button></form>
+      </div>
+    </section>
+    <section class="page" id="page-activity">
+      <div class="card"><p class="eyebrow">ACTIVITY</p><h2>Recorded actions</h2><p class="muted">This log contains system activity only; it is not a performance report.</p></div>
+      <div id="activity-list" class="stack"></div>
+    </section>
+  </main>
+  <dialog id="edit-dialog">
+    <form id="edit-form" method="dialog">
+      <p class="eyebrow">EDIT DRAFT</p><h2>Review the content.</h2>
+      <input type="hidden" name="id">
+      <label>Hook<input name="hook" required maxlength="500"></label>
+      <label>Main message<textarea name="message" required maxlength="4000"></textarea></label>
+      <label>Caption or script<textarea name="caption" required maxlength="5000"></textarea></label>
+      <label>Call to action<input name="callToAction" required maxlength="500"></label>
+      <label>Visual direction<textarea name="visualDirection" maxlength="2000"></textarea></label>
+      <label>Alt text (only when actual media exists)<textarea name="altText" maxlength="1000"></textarea></label>
+      <div class="actions"><button class="quiet" value="cancel">Cancel</button><button class="primary" id="save-edit" type="button">Save draft</button></div>
+    </form>
+  </dialog>
+</body>
+</html>

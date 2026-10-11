@@ -89,6 +89,39 @@ AI-generated recommendations must not override application security rules or acc
 - Document setup, deployment, and operational requirements.
 Do not build unnecessary microservices or create excessive abstraction.
 
+## Technology Stack
+
+### Frontend
+- Static HTML/CSS/JavaScript on Cloudflare Pages
+- No build tools - direct file deployment
+- Vanilla JavaScript for interactivity
+
+### Backend
+- Cloudflare Pages Functions for server-side logic
+- Cloudflare D1 (SQLite) for client and project data
+- Turnstile for spam protection
+- Web3Forms for email delivery
+- Google Sheets (optional) for lead tracking
+
+### Database Schema
+- `clients`: Client accounts with authentication
+- `projects`: Project records linked to clients
+- `milestones`: Project milestones
+- `tasks`: Detailed tasks within projects
+- `sessions`: Client authentication sessions
+
+### Key Endpoints
+- `/api/enquiry` - Contact form submission
+- `/api/login` - Client authentication
+- `/api/logout` - Client logout
+- `/api/client-projects` - Retrieve client's projects (authenticated)
+- `/api/admin/create-client` - Create client account (admin)
+- `/api/admin/create-project` - Create project (admin)
+
+### Setup Instructions
+See `docs/CLIENT_PORTAL_SETUP.md` for database and environment configuration.
+See `docs/ADMIN_API.md` for admin API usage.
+
 ## Business workflow priorities
 Implement and validate workflows in this order:
 

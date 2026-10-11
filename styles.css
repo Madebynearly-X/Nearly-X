@@ -54,3 +54,4 @@
 
 .country-picker__trigger:focus-visible,.phone-entry input:focus-visible,.country-picker__option:focus-visible{outline:3px solid #005fcc;outline-offset:2px;box-shadow:none}
 .turnstile-wrap{display:flex;justify-content:center;min-height:65px;margin-top:18px}
+.next-steps .tile h3{max-width:15ch}.testimonial-card{max-width:760px;margin:auto;padding:36px 42px;background:#fff;border-radius:26px;text-align:center;box-shadow:var(--shadow)}.testimonial-card blockquote{margin:0;font:600 clamp(24px,4vw,38px)/1.15 Manrope,sans-serif;letter-spacing:-.05em}.testimonial-card figcaption{margin-top:20px;color:var(--muted);font-size:14px}

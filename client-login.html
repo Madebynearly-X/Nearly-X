@@ -1,0 +1,104 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f5f7">
+  <title>Client Login | NEARLY Studio</title>
+  <meta name="description" content="Log in to your NEARLY Studio client portal to view project progress.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html" aria-label="NEARLY Studio home"><span class="brand-mark">N.</span><span>NEARLY <small>Studio</small></span></a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-nav-toggle aria-label="Open navigation menu">☰</button>
+      <nav class="nav-links" id="nav-links" data-nav aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <a href="contact.html">Contact</a>
+      </nav>
+    </div>
+  </header>
+  <main id="main" tabindex="-1">
+    <section class="page-hero container">
+      <span class="page-kicker"><i></i> Client Portal</span>
+      <h1>Log in to<br><span class="soft">your projects.</span></h1>
+      <p class="intro">Access your project status, milestones, and deliverables.</p>
+    </section>
+    <section class="section" style="padding-top:12px">
+      <div class="container" style="max-width:480px">
+        <form class="form" name="login" method="POST" action="/api/login" data-form>
+          <div class="error-summary" role="alert" tabindex="-1" data-error-summary hidden><h3>Please check the following</h3><ul data-error-list></ul></div>
+          <div class="field">
+            <label for="q-email">Email address *</label>
+            <input id="q-email" name="email" type="email" autocomplete="email" required aria-describedby="q-email-error">
+            <p class="field__error" id="q-email-error" data-error hidden></p>
+          </div>
+          <div class="field">
+            <label for="q-password">Password *</label>
+            <input id="q-password" name="password" type="password" autocomplete="current-password" required aria-describedby="q-password-error">
+            <p class="field__error" id="q-password-error" data-error hidden></p>
+          </div>
+          <button class="button form-submit" type="submit">Log in</button>
+          <p class="form-note">Don't have an account? <a href="contact.html">Contact us to get started.</a></p>
+          <div class="form-success" tabindex="-1" data-form-success hidden>
+            <h3>Login successful</h3>
+            <p>Redirecting to your dashboard...</p>
+          </div>
+          <p class="visually-hidden" aria-live="polite" data-live></p>
+        </form>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom"><p>© <span data-year></span> NEARLY Studio. Made with intention.</p></div>
+    </div>
+  </footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      const form = document.querySelector('[data-form]');
+      form.addEventListener('submit', async function(e) {
+        e.preventDefault();
+        const formData = new FormData(form);
+        const data = Object.fromEntries(formData.entries());
+
+        try {
+          const response = await fetch('/api/login', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(data),
+          });
+
+          const result = await response.json();
+
+          if (result.success) {
+            const successEl = form.querySelector('[data-form-success]');
+            successEl.hidden = false;
+            successEl.focus();
+            setTimeout(() => {
+              window.location.href = '/client-portal.html';
+            }, 1000);
+          } else {
+            const errorSummary = form.querySelector('[data-error-summary]');
+            const errorList = form.querySelector('[data-error-list]');
+            errorList.innerHTML = `<li>${result.message}</li>`;
+            errorSummary.hidden = false;
+            errorSummary.focus();
+          }
+        } catch (error) {
+          console.error('Login error:', error);
+          const errorSummary = form.querySelector('[data-error-summary]');
+          const errorList = form.querySelector('[data-error-list]');
+          errorList.innerHTML = '<li>An error occurred. Please try again.</li>';
+          errorSummary.hidden = false;
+          errorSummary.focus();
+        }
+      });
+    });
+  </script>
+</body>
+</html>

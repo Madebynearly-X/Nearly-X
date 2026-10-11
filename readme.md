@@ -1,4 +1,4 @@
-# NEARLY Studio — multi-page redesign
+# NEARLY Studio
 
 A static, responsive website with an Apple-inspired minimalist direction (without copying Apple branding): generous whitespace, oversized typography, restrained blue accents, product-style mockups and simple navigation.
 
@@ -9,6 +9,8 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 - `business-websites.html` — starter and business websites
 - `website-care.html` — maintenance service
 - `contact.html` — enquiry form, with service selection prefilled from page links and a searchable international calling-code picker
+- `client-login.html` — client portal login
+- `client-portal.html` — client dashboard for project tracking
 - `thanks.html` — post-submission confirmation page
 - `privacy.html` — plain-language notice for website enquiries and lead handling
 
@@ -21,6 +23,12 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 - `contact-form.js` — enquiry submission and international phone country-code picker; country flags load as Twemoji SVGs from cdnjs
 - `functions/api/enquiry.js` — server-side Web3Forms delivery, enquiry validation, rate limiting and optional authenticated Google Sheets lead recording
 - `functions/api/leads-summary.js` — Cloudflare Access-authenticated lead summary endpoint for the operations dashboard
+- `functions/api/auth.js` — authentication utilities for client portal
+- `functions/api/login.js` — client login endpoint
+- `functions/api/logout.js` — client logout endpoint
+- `functions/api/client-projects.js` — client project data endpoint
+- `functions/api/admin/create-client.js` — admin client creation endpoint
+- `functions/api/admin/create-project.js` — admin project creation endpoint
 - `dashboard.html` — private operations dashboard showing pipeline status and due follow-ups
 - `dashboard.js` — dashboard data loading and rendering, served as a same-origin script for the Content Security Policy
 - `scripts/google-sheets-webhook.gs` — Google Apps Script endpoint that records leads, exposes dashboard data and maintains the Sheet's follow-up pipeline
@@ -65,33 +73,33 @@ The dashboard is not linked from the public navigation or sitemap and is marked 
    - `CF_ACCESS_TEAM_DOMAIN` — team domain only, without `https://`.
    - `CF_ACCESS_AUD` — audience tag for the `/api/leads-summary` application.
    Keep the Sheets webhook URL and token as encrypted secrets. Add equivalent Preview variables only if the preview host is covered by an Access app that forwards the Access JWT.
-7. Deploy only after both path policies and variables are configured. Verify signed-out requests are blocked for the page and API; verify the approved email can sign in and load the dashboard. Repeat for every hostname.
+7. Deploy only after both path policies and variables are configured. Verify signed-out requests 
 
-The API does not send lead email addresses, phone numbers, enquiry details, or internal notes to the browser. It limits returned lead fields and the dashboard HTML-escapes displayed values. The static dashboard page must have its Cloudflare Access application in place before it is deployed if the empty page shell should not be public.
+## Client Portal
 
-## Optional: record enquiries in Google Sheets at no hosting cost
+The client portal allows clients to log in and view their project progress, milestones, and deliverables.
 
-This setup does not require n8n or a separate hosting service. It uses Google Sheets and a small Google Apps Script web app. Google account quotas and product terms apply. The website keeps using Web3Forms for enquiry email; the Cloudflare Pages Function separately sends a copy to your script for the private lead sheet. If recording fails, the form reports that the email was accepted but the lead tracker could not be updated.
+### Setup
 
-1. In Google Sheets, create a private spreadsheet named `NEARLY Leads` and add a tab named `Leads`. Keep access restricted to you and anyone who needs the enquiries.
-2. Open the spreadsheet ID from its URL: the long text between `/d/` and `/edit`. Keep this ID handy.
-3. Open [script.google.com](https://script.google.com/), create a new project, and paste the contents of `scripts/google-sheets-webhook.gs` into `Code.gs`. Save the project.
-4. In Apps Script, open **Project Settings** and add these **Script Properties**:
-   - `SPREADSHEET_ID` — the spreadsheet ID from step 2.
-   - `WEBHOOK_TOKEN` — a new, private random secret of at least 32 characters. Do not share or commit it.
-5. Choose **Deploy → New deployment → Web app**. Set **Execute as** to your Google account and **Who has access** to **Anyone**, then deploy and approve Google Sheets access. Anyone can reach this public endpoint, but it only records a lead when the private token matches.
-6. Copy the deployed web app URL. It should start with `https://script.google.com/macros/s/` and end with `/exec`.
-7. In the Cloudflare Pages project's **Settings → Variables and Secrets** for **Production**, add encrypted secrets named `GOOGLE_SHEETS_WEBHOOK_URL` (the Apps Script URL) and `GOOGLE_SHEETS_WEBHOOK_TOKEN` (the exact same random secret from step 4). Do not put either secret into website files or chat.
-8. Redeploy the Pages project. The site's `privacy.html` notice describes lead storage in Google Sheets, the services processing it, and the 12-month retention period for enquiries that do not become client relationships. Review it if these practices change. Submit a clearly marked test enquiry and confirm both the existing email and the row in the `Leads` tab before relying on this workflow.
+See `docs/CLIENT_PORTAL_SETUP.md` for complete setup instructions including:
 
-Until both Cloudflare secrets are set, sheet recording is disabled and the existing email flow is unchanged. If Google Sheets recording fails after activation, the email is still sent; the site reports that sheet recording was not confirmed. Apps Script logs failures without logging the enquiry contents.
+- Creating the Cloudflare D1 database
+- Running database migrations
+- Configuring environment variables
+- Setting up D1 bindings in Cloudflare Pages
 
-### Lead follow-up columns
+### Required Environment Variables
 
-The Apps Script adds `last_contacted`, `follow_up_date`, and `notes` to the `Leads` sheet if they are missing. It formats the header, freezes it, adds a filter, and adds a `status` dropdown with `New`, `Contacted`, `Qualified`, `Proposal sent`, `Won`, and `Lost`. This setup is only repeated when headers need to be created or extended, so formatting and validation are not reapplied on every enquiry. New enquiries are added as `New`; enter contact dates, follow-up dates, and notes manually as you work each lead. For an existing deployment, replace `Code.gs` with the latest contents of `scripts/google-sheets-webhook.gs`, save, then use **Deploy → Manage deployments → Edit** and deploy a new version of the web app. Keep its existing Script Properties and `/exec` URL; the Cloudflare secrets do not need changing.
+- `ADMIN_API_KEY` — required for admin API endpoints (client/project creation)
+- Existing secrets: `TURNSTILE_SECRET_KEY`, `WEB3FORMS_ACCESS_KEY`, `GOOGLE_SHEETS_WEBHOOK_URL`, `GOOGLE_SHEETS_WEBHOOK_TOKEN`
+
+### Admin API
+
+Admin endpoints for creating clients and projects are documented in `docs/ADMIN_API.md`.
 
 ## Accessibility
 The site includes a skip link, named primary navigation, keyboard-visible focus indicators, keyboard-operable enquiry controls, semantic page landmarks, and reduced-motion support. These code improvements are not a legal ADA compliance certification or a complete WCAG conformance audit; test with assistive technologies and users, and review applicable legal requirements before making a compliance claim.
 
-## Run locally
-Open `index.html` in a browser to preview the static pages. The enquiry endpoint requires Cloudflare Pages Functions and the `WEB3FORMS_ACCESS_KEY` secret, so the complete form flow must be tested on Cloudflare Pages or with Wrangler Pages development. Use dummy details for tests.
+## Repository safety
+
+`.gitignore` excludes environment files, Wrangler state, editor settings, logs, and dependencies. Review `_headers` whenever adding a third-party script, font, image source or endpoint because the Content Security Policy must be updated deliberately.

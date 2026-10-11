@@ -1,0 +1,207 @@
+<!doctype html>
+<html lang="en-ZA">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#f5f5f7">
+  <title>Client Portal | NEARLY Studio</title>
+  <meta name="description" content="View your NEARLY Studio project progress, milestones, and deliverables.">
+  <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+  <link rel="stylesheet" href="styles.css">
+  <script src="script.js" defer></script>
+  <style>
+    .portal-header {
+      background: #1a1a1a;
+      color: #fff;
+      padding: 2rem 0;
+      margin-bottom: 2rem;
+    }
+    .portal-header h1 {
+      color: #fff;
+    }
+    .project-card {
+      background: #fff;
+      border: 1px solid #e5e5e5;
+      border-radius: 8px;
+      padding: 1.5rem;
+      margin-bottom: 1.5rem;
+    }
+    .project-status {
+      display: inline-block;
+      padding: 0.25rem 0.75rem;
+      border-radius: 20px;
+      font-size: 0.875rem;
+      font-weight: 500;
+    }
+    .status-pending { background: #fff3cd; color: #856404; }
+    .status-in-progress { background: #cce5ff; color: #004085; }
+    .status-completed { background: #d4edda; color: #155724; }
+    .milestone-item {
+      display: flex;
+      align-items: center;
+      padding: 0.75rem 0;
+      border-bottom: 1px solid #f0f0f0;
+    }
+    .milestone-item:last-child {
+      border-bottom: none;
+    }
+    .milestone-status {
+      width: 24px;
+      height: 24px;
+      border-radius: 50%;
+      margin-right: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+    }
+    .milestone-status.pending { background: #fff3cd; color: #856404; }
+    .milestone-status.completed { background: #d4edda; color: #155724; }
+    .logout-btn {
+      background: #666;
+      color: #fff;
+      border: none;
+      padding: 0.5rem 1rem;
+      border-radius: 4px;
+      cursor: pointer;
+      font-size: 0.875rem;
+    }
+    .logout-btn:hover {
+      background: #555;
+    }
+    .loading {
+      text-align: center;
+      padding: 2rem;
+      color: #666;
+    }
+    .error {
+      background: #f8d7da;
+      color: #721c24;
+      padding: 1rem;
+      border-radius: 4px;
+      margin-bottom: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to content</a>
+  <header class="site-header">
+    <div class="container nav-inner">
+      <a class="brand" href="index.html" aria-label="NEARLY Studio home"><span class="brand-mark">N.</span><span>NEARLY <small>Studio</small></span></a>
+      <button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-nav-toggle aria-label="Open navigation menu">☰</button>
+      <nav class="nav-links" id="nav-links" data-nav aria-label="Main navigation">
+        <a href="index.html">Home</a>
+        <button class="logout-btn" id="logout-btn">Log out</button>
+      </nav>
+    </div>
+  </header>
+  <main id="main" tabindex="-1">
+    <div class="portal-header">
+      <div class="container">
+        <p class="eyebrow">Welcome back</p>
+        <h1 id="client-name">Loading...</h1>
+        <p id="client-business" class="muted"></p>
+      </div>
+    </div>
+    <section class="section">
+      <div class="container">
+        <div id="loading" class="loading">Loading your projects...</div>
+        <div id="error" class="error hidden"></div>
+        <div id="projects-container"></div>
+      </div>
+    </section>
+  </main>
+  <footer class="site-footer">
+    <div class="container">
+      <div class="footer-bottom"><p>© <span data-year></span> NEARLY Studio. Made with intention.</p></div>
+    </div>
+  </footer>
+  <script>
+    document.addEventListener('DOMContentLoaded', async function() {
+      const loadingEl = document.getElementById('loading');
+      const errorEl = document.getElementById('error');
+      const projectsContainer = document.getElementById('projects-container');
+      const clientNameEl = document.getElementById('client-name');
+      const clientBusinessEl = document.getElementById('client-business');
+      const logoutBtn = document.getElementById('logout-btn');
+
+      // Logout handler
+      logoutBtn.addEventListener('click', async function() {
+        try {
+          await fetch('/api/logout', { method: 'POST' });
+          window.location.href = '/client-login.html';
+        } catch (error) {
+          console.error('Logout error:', error);
+          window.location.href = '/client-login.html';
+        }
+      });
+
+      // Load projects
+      try {
+        const response = await fetch('/api/client-projects');
+        const result = await response.json();
+
+        if (!response.ok || !result.success) {
+          throw new Error(result.message || 'Failed to load projects');
+        }
+
+        // Update client info
+        clientNameEl.textContent = result.client.name;
+        clientBusinessEl.textContent = result.client.business || '';
+
+        loadingEl.hidden = true;
+
+        if (result.projects.length === 0) {
+          projectsContainer.innerHTML = '<p class="muted">You don\'t have any active projects yet.</p>';
+          return;
+        }
+
+        // Render projects
+        result.projects.forEach(project => {
+          const projectCard = document.createElement('div');
+          projectCard.className = 'project-card';
+
+          const statusClass = `status-${project.status.replace(' ', '-')}`;
+          const statusLabel = project.status.replace('-', ' ').replace(/\b\w/g, l => l.toUpperCase());
+
+          let milestonesHtml = '';
+          if (project.milestones && project.milestones.length > 0) {
+            milestonesHtml = '<h3>Milestones</h3><div class="milestones">';
+            project.milestones.forEach(milestone => {
+              const milestoneStatus = milestone.status === 'completed' ? 'completed' : 'pending';
+              const milestoneIcon = milestone.status === 'completed' ? '✓' : '○';
+              milestonesHtml += `
+                <div class="milestone-item">
+                  <span class="milestone-status ${milestoneStatus}">${milestoneIcon}</span>
+                  <div>
+                    <strong>${milestone.name}</strong>
+                    ${milestone.due_date ? `<br><small class="muted">Due: ${new Date(milestone.due_date).toLocaleDateString()}</small>` : ''}
+                  </div>
+                </div>
+              `;
+            });
+            milestonesHtml += '</div>';
+          }
+
+          projectCard.innerHTML = `
+            <div style="display:flex; justify-content:space-between; align-items:flex-start; margin-bottom:1rem;">
+              <h2 style="margin:0;">${project.name}</h2>
+              <span class="project-status ${statusClass}">${statusLabel}</span>
+            </div>
+            <p class="muted" style="margin-bottom:1rem;">Package: ${project.package}</p>
+            ${milestonesHtml}
+          `;
+
+          projectsContainer.appendChild(projectCard);
+        });
+
+      } catch (error) {
+        console.error('Load projects error:', error);
+        loadingEl.hidden = true;
+        errorEl.textContent = error.message || 'An error occurred while loading your projects. Please try again.';
+        errorEl.hidden = false;
+      }
+    });
+  </script>
+</body>
+</html>

@@ -1,0 +1,27 @@
+name: Deploy site to Cloudflare Pages
+
+on:
+  push:
+    branches:
+      - main
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - name: Check out repository
+        uses: actions/checkout@v4
+
+      - name: Deploy to Cloudflare Pages
+        uses: cloudflare/wrangler-action@v3
+        with:
+          apiToken: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+          accountId: ${{ secrets.CLOUDFLARE_ACCOUNT_ID }}
+          command: pages deploy . --project-name ${{ vars.CLOUDFLARE_PAGES_PROJECT }} --branch main
+
+# Note: D1 database bindings must be configured in the Cloudflare Pages dashboard
+# Navigate to: Pages Project → Settings → Functions → D1 database bindings
+# Add binding name: DB, D1 database: nearly-studio-db
