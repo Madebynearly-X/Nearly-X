@@ -22,6 +22,7 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 - `functions/api/enquiry.js` — server-side Web3Forms delivery, enquiry validation, rate limiting and optional authenticated Google Sheets lead recording
 - `functions/api/leads-summary.js` — Cloudflare Access-authenticated lead summary endpoint for the operations dashboard
 - `dashboard.html` — private operations dashboard showing pipeline status and due follow-ups
+- `dashboard.js` — dashboard data loading and rendering, served as a same-origin script for the Content Security Policy
 - `scripts/google-sheets-webhook.gs` — Google Apps Script endpoint that records leads, exposes dashboard data and maintains the Sheet's follow-up pipeline
 
 ## Before publishing
