@@ -145,6 +145,17 @@ export async function onRequestGet({ request, env }) {
     }, 503);
   }
 
+  if (new URL(request.url).searchParams.get("access") === "1") {
+    const dashboardUrl = new URL("/dashboard.html?access-return=1", request.url);
+    return new Response(null, {
+      status: 302,
+      headers: {
+        "Cache-Control": "no-store",
+        Location: dashboardUrl.toString(),
+      },
+    });
+  }
+
   if (!env.GOOGLE_SHEETS_WEBHOOK_URL || !env.GOOGLE_SHEETS_WEBHOOK_TOKEN) {
     return json({
       success: false,

@@ -107,9 +107,19 @@
 
       renderStatusBreakdown(summary);
       renderRows(result.leads || []);
+      if (new URLSearchParams(window.location.search).has("access-return")) {
+        const url = new URL(window.location.href);
+        url.searchParams.delete("access-return");
+        window.history.replaceState(null, "", `${url.pathname}${url.search}${url.hash}`);
+      }
       statusNode.textContent = summary.generated_at ? `Dashboard refreshed ${formatDate(summary.generated_at)}` : "Live lead data is available.";
       statusNode.className = "empty-state";
     } catch (error) {
+      if (!new URLSearchParams(window.location.search).has("access-return")) {
+        window.location.assign("/api/leads-summary?access=1");
+        return;
+      }
+
       statusNode.textContent = "The lead dashboard could not load right now. Please check the Google Sheets endpoint and Cloudflare settings.";
       statusNode.className = "empty-state";
       console.error(error);
