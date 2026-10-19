@@ -58,10 +58,10 @@ export async function onRequestPost({ request, env }) {
 
   const clientId = Number(readField(data, "client_id", 10));
   const name = readField(data, "name", 160);
-  const package = readField(data, "package", 80);
+  const projectPackage = readField(data, "package", 80);
   const status = readField(data, "status", 50) || "pending";
 
-  if (!clientId || !name || !package) {
+  if (!clientId || !name || !projectPackage) {
     return json({ success: false, message: "Client ID, name, and package are required." }, 400);
   }
 
@@ -77,7 +77,7 @@ export async function onRequestPost({ request, env }) {
   try {
     const result = await env.DB.prepare(
       'INSERT INTO projects (client_id, name, package, status) VALUES (?, ?, ?, ?)'
-    ).bind(clientId, name, package, status).run();
+    ).bind(clientId, name, projectPackage, status).run();
 
     if (!result.success) {
       return json({ success: false, message: "Failed to create project." }, 500);
@@ -89,7 +89,7 @@ export async function onRequestPost({ request, env }) {
         id: result.meta.last_row_id,
         client_id: clientId,
         name,
-        package,
+        package: projectPackage,
         status,
       }
     });
