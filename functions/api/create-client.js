@@ -1,4 +1,4 @@
-import { hashPassword } from '../auth.js';
+import { hashPassword } from './auth.js';
 
 const JSON_HEADERS = {
   "Content-Type": "application/json; charset=utf-8",
