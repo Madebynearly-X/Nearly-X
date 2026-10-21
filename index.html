@@ -23,6 +23,8 @@
 <link rel="icon" href="/favicon.svg" type="image/svg+xml">
 <link rel="stylesheet" href="styles.css?v=2">
 <link rel="stylesheet" href="selected-concepts.css">
+<link rel="stylesheet" href="motion-advanced.css?v=1">
+<script src="motion-advanced.js?v=1" defer></script>
 <script src="script.js?v=2" defer>
 </script>
 <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"NEARLY Studio","url":"https://nearly-x.pages.dev/","email":"madebynearly@gmail.com","telephone":"+27783940421","address":{"@type":"PostalAddress","addressLocality":"Pretoria","addressRegion":"Gauteng","addressCountry":"ZA"},"image":"https://nearly-x.pages.dev/assets/og-card.png","areaServed":["South Africa","Worldwide"],"serviceType":["Landing page design","Business website design","Website maintenance"],"hasOfferCatalog":{"@type":"OfferCatalog","name":"Website services","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Landing page design"},"priceSpecification":{"@type":"UnitPriceSpecification","priceCurrency":"ZAR","minPrice":2500}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Starter and business website design"},"priceSpecification":{"@type":"UnitPriceSpecification","priceCurrency":"ZAR","minPrice":4500}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Website care"},"priceSpecification":{"@type":"UnitPriceSpecification","priceCurrency":"ZAR","minPrice":500,"unitText":"month"}}]}}</script>
@@ -57,7 +59,7 @@
 </h1>
 <p class="intro">Mobile-first landing pages and business websites that make your services easy to understand and the next step easy to take.</p>
 <div class="actions">
-<a class="button" href="contact.html">Tell us about your project</a>
+<a class="button" data-magnetic href="contact.html">Tell us about your project</a>
 <a class="button button--quiet" href="#services">Explore services <span aria-hidden="true">↓</span>
 </a>
 </div>
@@ -83,6 +85,45 @@
 <div class="demo-product" aria-hidden="true">
 </div>
 </div>
+</div>
+</div>
+</section>
+<section class="section" aria-labelledby="compare-title">
+<div class="container">
+<div class="section-head reveal">
+<p class="eyebrow">Focus, illustrated</p>
+<h2 id="compare-title">Same business.<br>Two directions.</h2>
+<p>Drag the handle to compare a crowded, generic template with a page built around one message and one next step.</p>
+</div>
+
+<div class="cmp reveal" data-compare>
+<div class="cmp__stage" data-compare-stage>
+
+<!-- Base layer: the generic template (decorative mock) -->
+<div class="cmp__layer cmp__layer--before" aria-hidden="true">
+<span class="cmp__tag">Typical template</span>
+<div class="cmp__bar"><span>Home</span><span>About</span><span>Services</span><span>Gallery</span><span>News</span><span>FAQ</span><span>Contact</span></div>
+<div class="cmp__banner">Welcome to our website</div>
+<div class="cmp__clutter"><i></i><i></i><i></i></div>
+<div class="cmp__btns"><b>Learn more</b><b>Click here</b><b>Submit</b></div>
+</div>
+
+<!-- Top layer: the focused page (decorative mock), clipped by --split -->
+<div class="cmp__layer cmp__layer--after" aria-hidden="true">
+<span class="cmp__tag">Focused page</span>
+<p class="cmp__kicker">MADE TO MOVE YOU FORWARD</p>
+<h3 class="cmp__headline">Good work deserves to be seen.</h3>
+<p class="cmp__sub">One clear message and one obvious next step.</p>
+<span class="cmp__cta">Tell us about your project</span>
+</div>
+
+<!-- Accessible control. Must come BEFORE .cmp__handle so :focus-visible ~ can style the knob. -->
+<input class="cmp__range" type="range" min="5" max="95" step="1" value="50"
+       aria-label="Compare a typical template with a focused page" data-compare-range hidden>
+
+<div class="cmp__handle" aria-hidden="true"><span class="cmp__knob">&#8596;</span></div>
+</div>
+<p class="cmp__note">Illustrative concept, not a client result.</p>
 </div>
 </div>
 </section>
