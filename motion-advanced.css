@@ -39,26 +39,93 @@
   }
 }
 
-/* ---- Pillar 1: press feedback and magnetic CTAs --------------------------- */
-.button {
-  transition:
-    background-color 0.2s ease,
-    color 0.2s ease,
-    transform var(--dur-fast) var(--ease-out),
-    translate var(--dur-fast) var(--ease-out);
-}
+/* ---- Lively motion: springs, bounce, magnetic pull ------------------------ */
+/* Everything bouncy lives inside no-preference. With "reduce motion" on, the
+   site's own reduced-motion rules in styles.css apply untouched. */
+@media (prefers-reduced-motion: no-preference) {
+  /* Reveals: styles.css fades each block in; this adds a springy rise with a
+     small overshoot on top. Kept shorter (550ms) than the 650ms opacity fade so
+     script.js can still clear --d on transitionend without a visible jump. */
+  .reveal.is-visible {
+    animation: spring-in 550ms var(--spring) backwards;
+    animation-delay: var(--d, 0s);
+  }
 
-/* Equal specificity to .button:hover in styles.css, and loaded later, so it wins. */
-.button:active {
-  transform: scale(0.97);
-}
+  @keyframes spring-in {
+    from {
+      transform: translateY(38px) scale(0.96);
+    }
+  }
 
-/* Opt-in: add data-magnetic (optionally data-magnetic="0.25") to a .button.
-   Uses the individual `translate` property so it composes with the existing
-   hover lift and the press scale instead of fighting them. */
-@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
-  .button[data-magnetic] {
+  /* Cards: bouncy lift on hover. Same property list as styles.css, only the
+     transform timing changes, so shadow / padding / background still animate. */
+  .tile {
+    transition:
+      opacity 0.65s,
+      transform 600ms var(--spring),
+      box-shadow 0.45s,
+      padding 0.3s,
+      background 0.3s;
+    transition-delay: var(--d, 0s);
+  }
+
+  .tile:hover {
+    transform: translateY(-10px) scale(1.015);
+  }
+
+  /* Buttons: springy hover, snappy press, magnetic pull (see script) */
+  .button {
+    transition:
+      background-color 0.2s ease,
+      color 0.2s ease,
+      transform 550ms var(--spring),
+      translate 250ms var(--ease-out);
+  }
+
+  .button:hover {
+    transform: translateY(-2px) scale(1.05);
+  }
+
+  .button--quiet:hover {
+    transform: translateX(4px);
+  }
+
+  .button:active {
+    transform: scale(0.93);
+    transition-duration: 0.2s, 0.2s, 90ms, 250ms;
+  }
+
+  .button--quiet:active {
+    transform: scale(0.97);
+  }
+
+  .button {
     translate: var(--mag-x, 0px) var(--mag-y, 0px);
+  }
+
+  /* Price pop when the payment-plan switch changes the numbers */
+  [data-plan-price],
+  [data-plan-total] {
+    display: inline-block;
+  }
+
+  .is-popping {
+    animation: pop 600ms var(--spring) backwards;
+    animation-delay: var(--pop-delay, 0ms);
+  }
+
+  @keyframes pop {
+    from {
+      transform: scale(1.22);
+      opacity: 0.2;
+    }
+  }
+}
+
+/* No-motion baseline: keep the press feedback, nothing animated */
+@media (prefers-reduced-motion: reduce) {
+  .button:active {
+    transform: scale(0.97);
   }
 }
 

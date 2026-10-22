@@ -5,8 +5,9 @@
  *
  * script.js already handles: scroll reveals, the scroll-progress bar, tile
  * spotlight and tilt, and the payment-plan switch. This file only adds:
- *   1. Opt-in magnetic CTAs        ([data-magnetic])
- *   2. The before/after comparison ([data-compare])
+ *   1. Magnetic buttons            (every .button outside the header, plus [data-magnetic])
+ *   2. Price pop on the plan switch (watches [data-plans], no change to script.js)
+ *   3. The before/after comparison ([data-compare])
  */
 (() => {
   'use strict';
@@ -16,8 +17,13 @@
 
   /* 1. Magnetic CTAs ------------------------------------------------------- */
   if (finePointer.matches && !reduced.matches) {
-    document.querySelectorAll('[data-magnetic]').forEach((el) => {
-      const strength = Number(el.dataset.magnetic) || 0.2;
+    const magnets = new Set([
+      ...document.querySelectorAll('[data-magnetic]'),
+      ...document.querySelectorAll('main .button, .cta-band .button'),
+    ]);
+
+    magnets.forEach((el) => {
+      const strength = Number(el.dataset.magnetic) || 0.25;
       let frame = 0;
 
       el.addEventListener(
@@ -49,7 +55,30 @@
     });
   }
 
-  /* 2. Before / after comparison -------------------------------------------- */
+  /* 2. Price pop ----------------------------------------------------------- */
+  // script.js rewrites the prices when the service toggle changes. Watching the
+  // text lets us pop each number without touching that code.
+  const plans = document.querySelector('[data-plans]');
+  if (plans && !reduced.matches && 'MutationObserver' in window) {
+    new MutationObserver((records) => {
+      const changed = new Set();
+      records.forEach((record) => {
+        const node = record.target.nodeType === 1 ? record.target : record.target.parentElement;
+        const el = node && node.closest('[data-plan-price], [data-plan-total]');
+        if (el) changed.add(el);
+      });
+      [...changed].forEach((el, i) => {
+        el.classList.remove('is-popping');
+        void el.offsetWidth; // restart the animation
+        el.style.setProperty('--pop-delay', `${i * 45}ms`);
+        el.classList.add('is-popping');
+      });
+    }).observe(plans, { childList: true, characterData: true, subtree: true });
+
+    plans.addEventListener('animationend', (e) => e.target.classList.remove('is-popping'));
+  }
+
+  /* 3. Before / after comparison -------------------------------------------- */
   // Without JS the stage shows a static 50/50 split and the range stays hidden,
   // the same progressive-enhancement pattern the payment-plan switch uses.
   document.querySelectorAll('[data-compare]').forEach((root) => {
