@@ -14,17 +14,22 @@
   --dur-slow: 500ms;
 
   /* Fallback first: a browser without linear() would otherwise drop the whole
-     transition declaration that uses var(--spring). */
-  --spring: var(--ease-out);
+     transition declaration that uses var(--bounce). */
+  --bounce: var(--ease-out);
 }
 
+/* Damped spring (about 31% overshoot, three visible bounces) */
 @supports (transition-timing-function: linear(0, 1)) {
   :root {
-    --spring: linear(
-      0, 0.009, 0.035 2.1%, 0.141, 0.281 6.7%, 0.723 12.9%, 0.938 16.7%,
-      1.017, 1.077, 1.121, 1.149 24.3%, 1.159, 1.163, 1.161, 1.154 29.9%,
-      1.129 32.8%, 1.051 39.6%, 1.017 43.1%, 0.991, 0.977 51%, 0.974 53.8%,
-      0.975 57.1%, 0.997 69.8%, 1.003 76.9%, 1.004 83.8%, 1
+    --bounce: linear(
+      0, 0.076 2.3%, 0.268 4.5%, 0.518 6.8%, 0.776 9.1%, 1.002 11.4%,
+      1.171 13.6%, 1.272 15.9%, 1.309 18.2%, 1.291 20.5%, 1.235 22.7%, 1.159 25.0%,
+      1.079 27.3%, 1.008 29.5%, 0.953 31.8%, 0.919 34.1%, 0.905 36.4%, 0.908 38.6%,
+      0.924 40.9%, 0.947 43.2%, 0.972 45.5%, 0.995 47.7%, 1.013 50.0%, 1.024 52.3%,
+      1.029 54.5%, 1.029 56.8%, 1.024 59.1%, 1.017 61.4%, 1.01 63.6%, 1.002 65.9%,
+      0.997 68.2%, 0.993 70.5%, 0.991 72.7%, 0.991 75.0%, 0.992 77.3%, 0.994 79.5%,
+      0.997 81.8%, 0.999 84.1%, 1.001 86.4%, 1.002 88.6%, 1.003 90.9%, 1.003 93.2%,
+      1.002 95.5%, 1.002 97.7%, 1
     );
   }
 }
@@ -39,30 +44,20 @@
   }
 }
 
-/* ---- Lively motion: springs, bounce, magnetic pull ------------------------ */
-/* Everything bouncy lives inside no-preference. With "reduce motion" on, the
-   site's own reduced-motion rules in styles.css apply untouched. */
+/* ---- Lively motion: bounce, 3D tilt, magnetic pull, parallax --------------- */
+/* Everything lively lives inside no-preference. With "reduce motion" on, the
+   site's own reduced-motion rules in styles.css apply untouched.
+   Reveal bounce and the tilt/parallax values are driven by motion-advanced.js. */
 @media (prefers-reduced-motion: no-preference) {
-  /* Reveals: styles.css fades each block in; this adds a springy rise with a
-     small overshoot on top. Kept shorter (550ms) than the 650ms opacity fade so
-     script.js can still clear --d on transitionend without a visible jump. */
-  .reveal.is-visible {
-    animation: spring-in 550ms var(--spring) backwards;
-    animation-delay: var(--d, 0s);
-  }
-
-  @keyframes spring-in {
-    from {
-      transform: translateY(38px) scale(0.96);
-    }
-  }
-
-  /* Cards: bouncy lift on hover. Same property list as styles.css, only the
-     transform timing changes, so shadow / padding / background still animate. */
+  /* Cards: bouncy lift plus a 3D tilt toward the cursor. Same property list as
+     styles.css (shadow, padding, background still animate); transform tracks the
+     pointer quickly while translate and scale do the bouncy lift. */
   .tile {
     transition:
       opacity 0.65s,
-      transform 600ms var(--spring),
+      transform 700ms var(--bounce),
+      translate 700ms var(--bounce),
+      scale 700ms var(--bounce),
       box-shadow 0.45s,
       padding 0.3s,
       background 0.3s;
@@ -70,37 +65,45 @@
   }
 
   .tile:hover {
-    transform: translateY(-10px) scale(1.015);
+    transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+    translate: 0 -12px;
+    scale: 1.025;
+    transition-duration: 0.65s, 140ms, 700ms, 700ms, 0.45s, 0.3s, 0.3s;
   }
 
-  /* Buttons: springy hover, snappy press, magnetic pull (see script) */
+  /* Buttons: bouncy hover, squashy press, magnetic pull */
   .button {
+    translate: var(--mag-x, 0px) var(--mag-y, 0px);
     transition:
       background-color 0.2s ease,
       color 0.2s ease,
-      transform 550ms var(--spring),
+      transform 650ms var(--bounce),
       translate 250ms var(--ease-out);
   }
 
   .button:hover {
-    transform: translateY(-2px) scale(1.05);
+    transform: translateY(-3px) scale(1.07);
   }
 
   .button--quiet:hover {
-    transform: translateX(4px);
+    transform: translateX(5px);
   }
 
   .button:active {
-    transform: scale(0.93);
+    transform: scale(0.9);
     transition-duration: 0.2s, 0.2s, 90ms, 250ms;
   }
 
   .button--quiet:active {
-    transform: scale(0.97);
+    transform: scale(0.96);
   }
 
-  .button {
-    translate: var(--mag-x, 0px) var(--mag-y, 0px);
+  /* Hero visuals drift at a different speed from the page (--py set in JS).
+     Uses the translate property, so it never fights the float animation on
+     .mini-window or the fadeUp entrance. */
+  .stage,
+  .visual-card {
+    translate: 0 var(--py, 0px);
   }
 
   /* Price pop when the payment-plan switch changes the numbers */
@@ -110,13 +113,13 @@
   }
 
   .is-popping {
-    animation: pop 600ms var(--spring) backwards;
+    animation: pop 700ms var(--bounce) backwards;
     animation-delay: var(--pop-delay, 0ms);
   }
 
   @keyframes pop {
     from {
-      transform: scale(1.22);
+      transform: scale(1.35);
       opacity: 0.2;
     }
   }
