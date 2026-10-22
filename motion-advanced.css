@@ -1,9 +1,9 @@
 /* ==========================================================================
    motion-advanced.css  |  NEARLY Studio
    Additive layer. Load AFTER styles.css (and selected-concepts.css).
-   Reuses the site's own tokens and class names (.button, .tile, .section-head,
-   .site-header). Does not redefine .reveal, .scroll-progress or the .tile
-   spotlight, which styles.css + script.js already provide.
+   Reuses the site's own tokens and class names (.button, .section-head).
+   Does not redefine .reveal, .scroll-progress, the .tile spotlight or any
+   page-load animation; those stay exactly as styles.css + script.js have them.
    ========================================================================== */
 
 /* ---- Tokens --------------------------------------------------------------- */
@@ -59,25 +59,6 @@
 @media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
   .button[data-magnetic] {
     translate: var(--mag-x, 0px) var(--mag-y, 0px);
-  }
-}
-
-/* ---- Pillar 3: page-to-page view transitions (no JS) ---------------------- */
-/* The site is multi-page, so a cross-document transition is the cheapest way to
-   make navigation feel continuous. Ignored by browsers that do not support it. */
-@media (prefers-reduced-motion: no-preference) {
-  @view-transition {
-    navigation: auto;
-  }
-
-  .site-header {
-    view-transition-name: site-header;
-  }
-
-  ::view-transition-old(root),
-  ::view-transition-new(root) {
-    animation-duration: var(--dur-base);
-    animation-timing-function: var(--ease-out);
   }
 }
 

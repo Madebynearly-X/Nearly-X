@@ -1,0 +1,535 @@
+diff --git a/404.html b/404.html
+index 6e83d91..e66d029 100644
+--- a/404.html
++++ b/404.html
+@@ -9,6 +9,7 @@
+ <meta name="robots" content="noindex,follow">
+ <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+ <link rel="stylesheet" href="/styles.css">
++<link rel="stylesheet" href="/motion-advanced.css?v=2">
+ <script src="/script.js" defer></script>
+ </head>
+ <body>
+diff --git a/business-websites.html b/business-websites.html
+index b507df1..d250a28 100644
+--- a/business-websites.html
++++ b/business-websites.html
+@@ -33,6 +33,7 @@
+     <link rel="canonical" href="https://nearly-x.pages.dev/business-websites" />
+     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+     <link rel="stylesheet" href="styles.css" />
++<link rel="stylesheet" href="motion-advanced.css?v=2" />
+     <script src="script.js" defer></script>
+   </head>
+   <body>
+diff --git a/concept-demos.html b/concept-demos.html
+index 6048c12..cc3dea5 100644
+--- a/concept-demos.html
++++ b/concept-demos.html
+@@ -22,6 +22,7 @@
+   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+   <link rel="stylesheet" href="styles.css">
+   <link rel="stylesheet" href="concept-demos.css">
++<link rel="stylesheet" href="motion-advanced.css?v=2">
+   <script src="script.js" defer></script>
+   <script src="concept-demos.js" defer></script>
+ </head>
+diff --git a/contact.html b/contact.html
+index 6211456..213294b 100644
+--- a/contact.html
++++ b/contact.html
+@@ -20,6 +20,7 @@
+   <meta name="twitter:card" content="summary_large_image">
+   <link rel="canonical" href="https://nearly-x.pages.dev/contact">
+   <link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
++<link rel="stylesheet" href="motion-advanced.css?v=2">
+   <script src="script.js?v=2" defer></script>
+   <script src="https://challenges.cloudflare.com/turnstile/v0/api.js" defer></script>
+   <script src="contact-form.js" defer></script>
+diff --git a/index.html b/index.html
+index 44cd0a5..8522c97 100644
+--- a/index.html
++++ b/index.html
+@@ -23,6 +23,8 @@
+ <link rel="icon" href="/favicon.svg" type="image/svg+xml">
+ <link rel="stylesheet" href="styles.css?v=2">
+ <link rel="stylesheet" href="selected-concepts.css">
++<link rel="stylesheet" href="motion-advanced.css?v=2">
++<script src="motion-advanced.js?v=1" defer></script>
+ <script src="script.js?v=2" defer>
+ </script>
+ <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"NEARLY Studio","url":"https://nearly-x.pages.dev/","email":"madebynearly@gmail.com","telephone":"+27783940421","address":{"@type":"PostalAddress","addressLocality":"Pretoria","addressRegion":"Gauteng","addressCountry":"ZA"},"image":"https://nearly-x.pages.dev/assets/og-card.png","areaServed":["South Africa","Worldwide"],"serviceType":["Landing page design","Business website design","Website maintenance"],"hasOfferCatalog":{"@type":"OfferCatalog","name":"Website services","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Landing page design"},"priceSpecification":{"@type":"UnitPriceSpecification","priceCurrency":"ZAR","minPrice":2500}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Starter and business website design"},"priceSpecification":{"@type":"UnitPriceSpecification","priceCurrency":"ZAR","minPrice":4500}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Website care"},"priceSpecification":{"@type":"UnitPriceSpecification","priceCurrency":"ZAR","minPrice":500,"unitText":"month"}}]}}</script>
+@@ -57,7 +59,7 @@
+ </h1>
+ <p class="intro">Mobile-first landing pages and business websites that make your services easy to understand and the next step easy to take.</p>
+ <div class="actions">
+-<a class="button" href="contact.html">Tell us about your project</a>
++<a class="button" data-magnetic href="contact.html">Tell us about your project</a>
+ <a class="button button--quiet" href="#services">Explore services <span aria-hidden="true">↓</span>
+ </a>
+ </div>
+@@ -86,6 +88,46 @@
+ </div>
+ </div>
+ </section>
++<section class="section" aria-labelledby="compare-title">
++<div class="container">
++<div class="section-head reveal">
++<p class="eyebrow">Focus, illustrated</p>
++<h2 id="compare-title">Same business.<br>Two directions.</h2>
++<p>Drag the handle to compare a crowded, generic template with a page built around one message and one next step.</p>
++</div>
++
++<div class="cmp reveal" data-compare>
++<div class="cmp__stage" data-compare-stage>
++
++<!-- Base layer: the generic template (decorative mock) -->
++<div class="cmp__layer cmp__layer--before" aria-hidden="true">
++<span class="cmp__tag">Typical template</span>
++<div class="cmp__bar"><span>Home</span><span>About</span><span>Services</span><span>Gallery</span><span>News</span><span>FAQ</span><span>Contact</span></div>
++<div class="cmp__banner">Welcome to our website</div>
++<div class="cmp__clutter"><i></i><i></i><i></i></div>
++<div class="cmp__btns"><b>Learn more</b><b>Click here</b><b>Submit</b></div>
++</div>
++
++<!-- Top layer: the focused page (decorative mock), clipped by --split -->
++<div class="cmp__layer cmp__layer--after" aria-hidden="true">
++<span class="cmp__tag">Focused page</span>
++<p class="cmp__kicker">MADE TO MOVE YOU FORWARD</p>
++<h3 class="cmp__headline">Good work deserves to be seen.</h3>
++<p class="cmp__sub">One clear message and one obvious next step.</p>
++<span class="cmp__cta">Tell us about your project</span>
++</div>
++
++<!-- Accessible control. Must come BEFORE .cmp__handle so :focus-visible ~ can style the knob. -->
++<input class="cmp__range" type="range" min="5" max="95" step="1" value="50"
++       aria-label="Compare a typical template with a focused page" data-compare-range hidden>
++
++<div class="cmp__handle" aria-hidden="true"><span class="cmp__knob">&#8596;</span></div>
++</div>
++<p class="cmp__note">Illustrative concept, not a client result.</p>
++</div>
++</div>
++</section>
++
+ <section class="section section--white" id="services">
+ <div class="container">
+ <div class="section-head reveal">
+diff --git a/landing-pages.html b/landing-pages.html
+index 0b6b823..5b212df 100644
+--- a/landing-pages.html
++++ b/landing-pages.html
+@@ -6,7 +6,7 @@
+ <meta property="og:image:width" content="1200">
+ <meta property="og:image:height" content="630">
+ <meta property="og:image:alt" content="NEARLY Studio: websites for businesses ready for more">
+-<meta name="twitter:image" content="https://nearly-x.pages.dev/assets/og-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="canonical" href="https://nearly-x.pages.dev/landing-pages"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"><script src="script.js" defer></script></head><body><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="container nav-inner"><a class="brand" href="index.html" aria-label="NEARLY Studio home"><span class="brand-mark">N.</span><span>NEARLY <small>Studio</small></span></a><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-nav-toggle aria-label="Open navigation menu">☰</button><nav class="nav-links" id="nav-links" data-nav aria-label="Main navigation"><a href="landing-pages.html">Landing pages</a><a href="business-websites.html">Business websites</a><a href="website-care.html">Website care</a><a href="index.html#work">Selected concepts</a><a class="button" href="contact.html">Tell us about your project</a></nav></div></header><main id="main" tabindex="-1"><section class="page-hero container"><span class="page-kicker"><i></i> Focused by design</span><h1>One page.<br><span class="soft">One clear next step.</span></h1><p class="intro">A landing page that makes your offer easy to understand and even easier to act on. Designed to turn the right attention into real enquiries.</p><div class="actions"><a class="button" href="contact.html?package=landing-page">Build my landing page</a><a class="button button--quiet" href="#included">What's included ↓</a></div><p class="microcopy">Starting at R2,500 · Typical turnaround 1–2 weeks</p></section><div class="page-visual" aria-hidden="true"><div class="visual-card" aria-hidden="true"><div class="mini-window"><div class="bar"><i></i><i></i><i></i></div><div class="mini-content"><span>YOUR OFFER, CLEARLY EXPRESSED</span><h3>Make the<br>next step<br>feel easy.</h3><p>Show people why you're right for them.</p><b>Enquire now ↗</b></div></div></div></div>
++<meta name="twitter:image" content="https://nearly-x.pages.dev/assets/og-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="canonical" href="https://nearly-x.pages.dev/landing-pages"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="motion-advanced.css?v=2"><script src="script.js" defer></script></head><body><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="container nav-inner"><a class="brand" href="index.html" aria-label="NEARLY Studio home"><span class="brand-mark">N.</span><span>NEARLY <small>Studio</small></span></a><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-nav-toggle aria-label="Open navigation menu">☰</button><nav class="nav-links" id="nav-links" data-nav aria-label="Main navigation"><a href="landing-pages.html">Landing pages</a><a href="business-websites.html">Business websites</a><a href="website-care.html">Website care</a><a href="index.html#work">Selected concepts</a><a class="button" href="contact.html">Tell us about your project</a></nav></div></header><main id="main" tabindex="-1"><section class="page-hero container"><span class="page-kicker"><i></i> Focused by design</span><h1>One page.<br><span class="soft">One clear next step.</span></h1><p class="intro">A landing page that makes your offer easy to understand and even easier to act on. Designed to turn the right attention into real enquiries.</p><div class="actions"><a class="button" href="contact.html?package=landing-page">Build my landing page</a><a class="button button--quiet" href="#included">What's included ↓</a></div><p class="microcopy">Starting at R2,500 · Typical turnaround 1–2 weeks</p></section><div class="page-visual" aria-hidden="true"><div class="visual-card" aria-hidden="true"><div class="mini-window"><div class="bar"><i></i><i></i><i></i></div><div class="mini-content"><span>YOUR OFFER, CLEARLY EXPRESSED</span><h3>Make the<br>next step<br>feel easy.</h3><p>Show people why you're right for them.</p><b>Enquire now ↗</b></div></div></div></div>
+ <section class="section section--white" id="included"><div class="container split"><div><p class="eyebrow">Made for momentum</p><h2>Everything has a reason to be there.</h2><p>No bloated pages or confusing journeys. Just the right story, in the right order, with a clear path to contact you.</p><ul class="feature-list"><li>One responsive, mobile-first page</li><li>Clear offer, benefits and calls to action</li><li>Enquiry button connected to email or WhatsApp</li><li>Basic on-page SEO setup</li><li>One revision round</li><li>Written scope and handover</li></ul></div><div class="visual-card" aria-hidden="true"><div class="mini-window"><div class="bar"><i></i><i></i><i></i></div><div class="mini-content"><span>LESS, DONE BETTER</span><h3>Clarity<br>converts.</h3><p>A focused page built around one goal.</p><b>Get started ↗</b></div></div></div></div></section>
+ <section class="section"><div class="container"><div class="section-head"><p class="eyebrow">Straightforward pricing</p><h2>A strong start from R2,500.</h2><p>Your final quote confirms exactly what's included before work begins.</p></div><div style="max-width:760px;margin:auto"><div class="price-row"><div><h3>Landing page</h3><p>One page · One revision round · 1–2 weeks</p></div><div class="price">R2,500+<small>once-off</small></div></div><div class="price-row"><div><h3>Need more than one page?</h3><p>We can scope a starter or business website around your needs.</p></div><a class="button button--dark" href="business-websites.html">Compare websites</a></div></div></div></section>
+ <section class="section section--white"><div class="container"><div class="section-head"><p class="eyebrow">Good to know</p><h2>Before we begin.</h2></div><div class="faq"><details><summary>Is the domain and hosting included?</summary><p>No. Domain and hosting fees are separate, and accounts should be registered in your name.</p></details><details><summary>Can I add more pages later?</summary><p>Yes. Additional pages or features can be quoted separately, or we can plan a larger website from the start.</p></details><details><summary>What do you need from me?</summary><p>We'll agree on the content, goals and scope first. You'll typically provide business details, service information, brand assets and feedback during the project.</p></details></div></div></section>
+diff --git a/motion-advanced.css b/motion-advanced.css
+new file mode 100644
+index 0000000..96338fe
+--- /dev/null
++++ b/motion-advanced.css
+@@ -0,0 +1,286 @@
++/* ==========================================================================
++   motion-advanced.css  |  NEARLY Studio
++   Additive layer. Load AFTER styles.css (and selected-concepts.css).
++   Reuses the site's own tokens and class names (.button, .section-head).
++   Does not redefine .reveal, .scroll-progress, the .tile spotlight or any
++   page-load animation; those stay exactly as styles.css + script.js have them.
++   ========================================================================== */
++
++/* ---- Tokens --------------------------------------------------------------- */
++:root {
++  --ease-out: cubic-bezier(0.16, 1, 0.3, 1);
++  --dur-fast: 150ms;
++  --dur-base: 250ms;
++  --dur-slow: 500ms;
++
++  /* Fallback first: a browser without linear() would otherwise drop the whole
++     transition declaration that uses var(--spring). */
++  --spring: var(--ease-out);
++}
++
++@supports (transition-timing-function: linear(0, 1)) {
++  :root {
++    --spring: linear(
++      0, 0.009, 0.035 2.1%, 0.141, 0.281 6.7%, 0.723 12.9%, 0.938 16.7%,
++      1.017, 1.077, 1.121, 1.149 24.3%, 1.159, 1.163, 1.161, 1.154 29.9%,
++      1.129 32.8%, 1.051 39.6%, 1.017 43.1%, 0.991, 0.977 51%, 0.974 53.8%,
++      0.975 57.1%, 0.997 69.8%, 1.003 76.9%, 1.004 83.8%, 1
++    );
++  }
++}
++
++/* ---- Content must stay visible when JavaScript is off --------------------- */
++/* styles.css hides .reveal by default and only script.js shows it. */
++@media (scripting: none) {
++  .reveal {
++    opacity: 1;
++    transform: none;
++    transition: none;
++  }
++}
++
++/* ---- Pillar 1: press feedback and magnetic CTAs --------------------------- */
++.button {
++  transition:
++    background-color 0.2s ease,
++    color 0.2s ease,
++    transform var(--dur-fast) var(--ease-out),
++    translate var(--dur-fast) var(--ease-out);
++}
++
++/* Equal specificity to .button:hover in styles.css, and loaded later, so it wins. */
++.button:active {
++  transform: scale(0.97);
++}
++
++/* Opt-in: add data-magnetic (optionally data-magnetic="0.25") to a .button.
++   Uses the individual `translate` property so it composes with the existing
++   hover lift and the press scale instead of fighting them. */
++@media (hover: hover) and (pointer: fine) and (prefers-reduced-motion: no-preference) {
++  .button[data-magnetic] {
++    translate: var(--mag-x, 0px) var(--mag-y, 0px);
++  }
++}
++
++/* ---- Before / after comparison (illustrative, CSS-built, no photos) ------- */
++.cmp {
++  max-width: 1000px;
++  margin: 0 auto;
++}
++
++.cmp__stage {
++  --split: 50%;
++  container-type: inline-size;
++  position: relative;
++  aspect-ratio: 16 / 10;
++  overflow: hidden;
++  border: 1px solid var(--line);
++  border-radius: var(--radius);
++  background: #fff;
++  box-shadow: var(--shadow);
++  user-select: none;
++}
++
++.cmp__layer {
++  position: absolute;
++  inset: 0;
++  display: flex;
++  flex-direction: column;
++}
++
++/* The focused page sits on top and is clipped from the right. clip-path is
++   compositor-friendly and avoids resizing anything while dragging. */
++.cmp__layer--after {
++  clip-path: inset(0 calc(100% - var(--split)) 0 0);
++}
++
++.cmp__tag {
++  position: absolute;
++  bottom: 3cqw;
++  padding: 0.5em 0.9em;
++  border-radius: 999px;
++  font-size: max(11px, 1.3cqw);
++  font-weight: 700;
++  letter-spacing: 0.02em;
++  z-index: 1;
++}
++
++@container (max-width: 520px) {
++  .cmp__tag {
++    padding: 0.4em 0.75em;
++    font-size: 10px;
++  }
++}
++
++.cmp__layer--before .cmp__tag {
++  right: 3cqw;
++  background: rgb(29 29 31 / 0.82);
++  color: #fff;
++}
++
++.cmp__layer--after .cmp__tag {
++  left: 3cqw;
++  background: var(--blue);
++  color: #fff;
++}
++
++/* Generic template mock: busy and unfocused on purpose */
++.cmp__layer--before {
++  background: #e9e9ee;
++  color: #3a3a3c;
++  font-family: Arial, Helvetica, sans-serif;
++}
++
++.cmp__bar {
++  display: flex;
++  justify-content: space-between;
++  gap: 2cqw;
++  padding: 2.2cqw 3cqw;
++  background: #cfcfd6;
++  font-size: max(8px, 1.1cqw);
++}
++
++.cmp__bar span {
++  opacity: 0.8;
++}
++
++.cmp__banner {
++  margin: 2cqw 3cqw 0;
++  padding: 3cqw;
++  background: #b7b7c0;
++  font-size: max(11px, 2.6cqw);
++  font-weight: 700;
++  text-transform: uppercase;
++  text-align: center;
++}
++
++.cmp__clutter {
++  display: grid;
++  grid-template-columns: repeat(3, 1fr);
++  gap: 1.6cqw;
++  margin: 2cqw 3cqw 0;
++}
++
++.cmp__clutter i {
++  display: block;
++  height: 8cqw;
++  background: #d5d5dc;
++  border: 1px solid #bdbdc6;
++}
++
++.cmp__btns {
++  display: flex;
++  justify-content: space-between;
++  gap: 1.4cqw;
++  margin: 2cqw 3cqw 0;
++}
++
++.cmp__btns b {
++  padding: 0.9cqw 1.8cqw;
++  background: #8e8e98;
++  color: #fff;
++  font-size: max(8px, 1.1cqw);
++  font-weight: 400;
++}
++
++/* Focused page mock: one message, one next step */
++.cmp__layer--after {
++  justify-content: center;
++  align-items: flex-start;
++  padding: 0 6cqw;
++  background: linear-gradient(120deg, #f9f9fb, #e9eef7);
++  color: var(--ink);
++}
++
++.cmp__kicker {
++  margin: 0 0 1.4cqw;
++  font-size: max(8px, 1.1cqw);
++  font-weight: 700;
++  letter-spacing: 0.16em;
++  color: var(--muted);
++}
++
++.cmp__headline {
++  margin: 0;
++  max-width: 8em;
++  font: 800 min(5.2cqw, 56px) / 0.98 Manrope, sans-serif;
++  letter-spacing: -0.07em;
++}
++
++.cmp__sub {
++  margin: 1.6cqw 0 0;
++  max-width: 36cqw;
++  font-size: max(10px, 1.5cqw);
++  color: var(--muted);
++}
++
++.cmp__cta {
++  margin-top: 2.4cqw;
++  padding: 1.1cqw 2.4cqw;
++  border-radius: 999px;
++  background: var(--ink);
++  color: #fff;
++  font-size: max(9px, 1.3cqw);
++  font-weight: 600;
++}
++
++/* Handle. Visual only; the invisible range input does the work. */
++.cmp__handle {
++  position: absolute;
++  top: 0;
++  bottom: 0;
++  left: var(--split);
++  width: 2px;
++  margin-left: -1px;
++  background: #fff;
++  box-shadow: 0 0 0 1px rgb(0 0 0 / 0.08);
++  pointer-events: none;
++  z-index: 2;
++}
++
++.cmp__knob {
++  position: absolute;
++  top: 50%;
++  left: 50%;
++  display: grid;
++  place-items: center;
++  width: 44px;
++  height: 44px;
++  border-radius: 50%;
++  background: #fff;
++  color: var(--ink);
++  font-size: 14px;
++  font-weight: 700;
++  box-shadow: 0 8px 24px rgb(0 0 0 / 0.28);
++  transform: translate(-50%, -50%);
++}
++
++.cmp__range {
++  position: absolute;
++  inset: 0;
++  z-index: 3;
++  width: 100%;
++  height: 100%;
++  margin: 0;
++  opacity: 0;
++  cursor: ew-resize;
++  /* Let vertical swipes scroll the page; only horizontal drags move the slider. */
++  touch-action: pan-y;
++}
++
++.cmp__range[hidden] {
++  display: none;
++}
++
++/* The input is invisible, so show keyboard focus on the knob instead. */
++.cmp__range:focus-visible ~ .cmp__handle .cmp__knob {
++  outline: 3px solid #005fcc;
++  outline-offset: 3px;
++}
++
++.cmp__note {
++  margin: 14px 0 0;
++  text-align: center;
++  font-size: 12px;
++  color: var(--muted);
++}
+diff --git a/motion-advanced.js b/motion-advanced.js
+new file mode 100644
+index 0000000..387ab6d
+--- /dev/null
++++ b/motion-advanced.js
+@@ -0,0 +1,73 @@
++/**
++ * motion-advanced.js  |  NEARLY Studio
++ * Additive. Load with `defer` AFTER script.js. Same-origin, no inline code, so it
++ * satisfies the site's script-src 'self' policy.
++ *
++ * script.js already handles: scroll reveals, the scroll-progress bar, tile
++ * spotlight and tilt, and the payment-plan switch. This file only adds:
++ *   1. Opt-in magnetic CTAs        ([data-magnetic])
++ *   2. The before/after comparison ([data-compare])
++ */
++(() => {
++  'use strict';
++
++  const reduced = window.matchMedia('(prefers-reduced-motion: reduce)');
++  const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
++
++  /* 1. Magnetic CTAs ------------------------------------------------------- */
++  if (finePointer.matches && !reduced.matches) {
++    document.querySelectorAll('[data-magnetic]').forEach((el) => {
++      const strength = Number(el.dataset.magnetic) || 0.2;
++      let frame = 0;
++
++      el.addEventListener(
++        'pointermove',
++        (e) => {
++          if (frame) return; // at most one style write per frame
++          frame = requestAnimationFrame(() => {
++            frame = 0;
++            const r = el.getBoundingClientRect();
++            const dx = (e.clientX - (r.left + r.width / 2)) * strength;
++            const dy = (e.clientY - (r.top + r.height / 2)) * strength;
++            el.style.setProperty('--mag-x', `${dx.toFixed(1)}px`);
++            el.style.setProperty('--mag-y', `${dy.toFixed(1)}px`);
++          });
++        },
++        { passive: true }
++      );
++
++      el.addEventListener(
++        'pointerleave',
++        () => {
++          cancelAnimationFrame(frame);
++          frame = 0;
++          el.style.removeProperty('--mag-x');
++          el.style.removeProperty('--mag-y');
++        },
++        { passive: true }
++      );
++    });
++  }
++
++  /* 2. Before / after comparison -------------------------------------------- */
++  // Without JS the stage shows a static 50/50 split and the range stays hidden,
++  // the same progressive-enhancement pattern the payment-plan switch uses.
++  document.querySelectorAll('[data-compare]').forEach((root) => {
++    const stage = root.querySelector('[data-compare-stage]');
++    const range = root.querySelector('[data-compare-range]');
++    if (!stage || !range) return;
++
++    const update = () => {
++      const value = Number(range.value);
++      stage.style.setProperty('--split', `${value}%`);
++      range.setAttribute(
++        'aria-valuetext',
++        `${value}% focused page, ${100 - value}% generic template`
++      );
++    };
++
++    range.addEventListener('input', update);
++    range.hidden = false;
++    update();
++  });
++})();
+diff --git a/privacy.html b/privacy.html
+index c8d82de..d3fefbb 100644
+--- a/privacy.html
++++ b/privacy.html
+@@ -15,6 +15,7 @@
+ <meta property="og:image:height" content="630">
+ <meta property="og:image:alt" content="NEARLY Studio: websites for businesses ready for more">
+ <meta name="twitter:image" content="https://nearly-x.pages.dev/assets/og-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="canonical" href="https://nearly-x.pages.dev/privacy"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css">
++<link rel="stylesheet" href="motion-advanced.css?v=2">
+   <script src="script.js" defer></script>
+ </head>
+ <body>
+diff --git a/thanks.html b/thanks.html
+index c3d2cb2..d44b39a 100644
+--- a/thanks.html
++++ b/thanks.html
+@@ -1 +1 @@
+-<!doctype html><html lang="en-ZA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f5f5f7"><title>Thanks for reaching out | NEARLY Studio</title><meta name="description" content="Your enquiry has been sent to NEARLY Studio."><meta name="robots" content="noindex,follow"><meta property="og:title" content="Thanks for reaching out | NEARLY Studio"><meta property="og:description" content="Your enquiry has been sent to NEARLY Studio."><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"><script src="script.js" defer></script></head><body><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="container nav-inner"><a class="brand" href="index.html" aria-label="NEARLY Studio home"><span class="brand-mark">N.</span><span>NEARLY <small>Studio</small></span></a><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-nav-toggle aria-label="Open navigation menu">☰</button><nav class="nav-links" id="nav-links" data-nav aria-label="Main navigation"><a href="landing-pages.html">Landing pages</a><a href="business-websites.html">Business websites</a><a href="website-care.html">Website care</a><a href="index.html#work">Selected concepts</a><a class="button" href="contact.html">Tell us about your project</a></nav></div></header><main id="main" tabindex="-1"><section class="page-hero container" style="min-height:55vh"><span class="page-kicker"><i></i> Message received</span><h1>Thanks for<br><span class="soft">reaching out.</span></h1><p class="intro">Your enquiry has been sent. We'll get back to you by email as soon as we can.</p><div class="actions"><a class="button" href="index.html">Back to NEARLY</a></div></section></main><footer class="site-footer"><div class="container"><div class="footer-top"><div><a class="brand" href="index.html"><span class="brand-mark">N.</span><span>NEARLY <small>Studio</small></span></a><p class="footer-tagline">Good work deserves<br>to be seen.</p></div><div class="footer-links"><div><strong>Explore</strong><a href="landing-pages.html">Landing pages</a><a href="business-websites.html">Business websites</a><a href="website-care.html">Website care</a></div><div><strong>NEARLY</strong><a href="index.html#work">Selected concepts</a><a href="index.html#approach">Our approach</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy notice</a></div><div><strong>Say hello</strong><a href="mailto:madebynearly@gmail.com">Email NEARLY ↗</a><a href="https://wa.me/27783940421">WhatsApp ↗</a><span>South Africa · Working worldwide</span></div></div></div><div class="footer-bottom"><p>© <span data-year></span> NEARLY Studio. Made with intention.</p><p>Independent web design · South Africa-based, working worldwide</p></div></div></footer></body></html>
+\ No newline at end of file
++<!doctype html><html lang="en-ZA"><head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#f5f5f7"><title>Thanks for reaching out | NEARLY Studio</title><meta name="description" content="Your enquiry has been sent to NEARLY Studio."><meta name="robots" content="noindex,follow"><meta property="og:title" content="Thanks for reaching out | NEARLY Studio"><meta property="og:description" content="Your enquiry has been sent to NEARLY Studio."><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="motion-advanced.css?v=2"><script src="script.js" defer></script></head><body><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="container nav-inner"><a class="brand" href="index.html" aria-label="NEARLY Studio home"><span class="brand-mark">N.</span><span>NEARLY <small>Studio</small></span></a><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-nav-toggle aria-label="Open navigation menu">☰</button><nav class="nav-links" id="nav-links" data-nav aria-label="Main navigation"><a href="landing-pages.html">Landing pages</a><a href="business-websites.html">Business websites</a><a href="website-care.html">Website care</a><a href="index.html#work">Selected concepts</a><a class="button" href="contact.html">Tell us about your project</a></nav></div></header><main id="main" tabindex="-1"><section class="page-hero container" style="min-height:55vh"><span class="page-kicker"><i></i> Message received</span><h1>Thanks for<br><span class="soft">reaching out.</span></h1><p class="intro">Your enquiry has been sent. We'll get back to you by email as soon as we can.</p><div class="actions"><a class="button" href="index.html">Back to NEARLY</a></div></section></main><footer class="site-footer"><div class="container"><div class="footer-top"><div><a class="brand" href="index.html"><span class="brand-mark">N.</span><span>NEARLY <small>Studio</small></span></a><p class="footer-tagline">Good work deserves<br>to be seen.</p></div><div class="footer-links"><div><strong>Explore</strong><a href="landing-pages.html">Landing pages</a><a href="business-websites.html">Business websites</a><a href="website-care.html">Website care</a></div><div><strong>NEARLY</strong><a href="index.html#work">Selected concepts</a><a href="index.html#approach">Our approach</a><a href="contact.html">Contact</a><a href="privacy.html">Privacy notice</a></div><div><strong>Say hello</strong><a href="mailto:madebynearly@gmail.com">Email NEARLY ↗</a><a href="https://wa.me/27783940421">WhatsApp ↗</a><span>South Africa · Working worldwide</span></div></div></div><div class="footer-bottom"><p>© <span data-year></span> NEARLY Studio. Made with intention.</p><p>Independent web design · South Africa-based, working worldwide</p></div></div></footer></body></html>
+\ No newline at end of file
+diff --git a/website-care.html b/website-care.html
+index 5faf333..f47fbd0 100644
+--- a/website-care.html
++++ b/website-care.html
+@@ -6,7 +6,7 @@
+ <meta property="og:image:width" content="1200">
+ <meta property="og:image:height" content="630">
+ <meta property="og:image:alt" content="NEARLY Studio: websites for businesses ready for more">
+-<meta name="twitter:image" content="https://nearly-x.pages.dev/assets/og-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="canonical" href="https://nearly-x.pages.dev/website-care"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"><script src="script.js" defer></script></head><body><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="container nav-inner"><a class="brand" href="index.html" aria-label="NEARLY Studio home"><span class="brand-mark">N.</span><span>NEARLY <small>Studio</small></span></a><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-nav-toggle aria-label="Open navigation menu">☰</button><nav class="nav-links" id="nav-links" data-nav aria-label="Main navigation"><a href="landing-pages.html">Landing pages</a><a href="business-websites.html">Business websites</a><a href="website-care.html">Website care</a><a href="index.html#work">Selected concepts</a><a class="button" href="contact.html">Tell us about your project</a></nav></div></header><main id="main" tabindex="-1"><section class="page-hero container"><span class="page-kicker"><i></i> After launch, still looked after</span><h1>Good websites<br><span class="soft">need good care.</span></h1><p class="intro">Keep your website maintained, backed up and up to date, without having to figure out every little thing yourself.</p><div class="actions"><a class="button" href="contact.html?package=care-plan">Ask about website care</a><a class="button button--quiet" href="#plan">See what's covered ↓</a></div><p class="microcopy">Care plans from R500/month · Clear monthly scope</p></section><div class="page-visual" aria-hidden="true"><div class="visual-card" aria-hidden="true"><div class="mini-window"><div class="bar"><i></i><i></i><i></i></div><div class="mini-content"><span>THE SMALL THINGS, TAKEN CARE OF</span><h3>Stay current.<br>Stay confident.</h3><p>Routine care for the website you've worked hard to build.</p><b>Ask about care ↗</b></div></div></div></div>
++<meta name="twitter:image" content="https://nearly-x.pages.dev/assets/og-card.png"><meta name="twitter:card" content="summary_large_image"><link rel="canonical" href="https://nearly-x.pages.dev/website-care"><link rel="icon" href="/favicon.svg" type="image/svg+xml"><link rel="stylesheet" href="styles.css"><link rel="stylesheet" href="motion-advanced.css?v=2"><script src="script.js" defer></script></head><body><a class="skip-link" href="#main">Skip to content</a><header class="site-header"><div class="container nav-inner"><a class="brand" href="index.html" aria-label="NEARLY Studio home"><span class="brand-mark">N.</span><span>NEARLY <small>Studio</small></span></a><button class="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-links" data-nav-toggle aria-label="Open navigation menu">☰</button><nav class="nav-links" id="nav-links" data-nav aria-label="Main navigation"><a href="landing-pages.html">Landing pages</a><a href="business-websites.html">Business websites</a><a href="website-care.html">Website care</a><a href="index.html#work">Selected concepts</a><a class="button" href="contact.html">Tell us about your project</a></nav></div></header><main id="main" tabindex="-1"><section class="page-hero container"><span class="page-kicker"><i></i> After launch, still looked after</span><h1>Good websites<br><span class="soft">need good care.</span></h1><p class="intro">Keep your website maintained, backed up and up to date, without having to figure out every little thing yourself.</p><div class="actions"><a class="button" href="contact.html?package=care-plan">Ask about website care</a><a class="button button--quiet" href="#plan">See what's covered ↓</a></div><p class="microcopy">Care plans from R500/month · Clear monthly scope</p></section><div class="page-visual" aria-hidden="true"><div class="visual-card" aria-hidden="true"><div class="mini-window"><div class="bar"><i></i><i></i><i></i></div><div class="mini-content"><span>THE SMALL THINGS, TAKEN CARE OF</span><h3>Stay current.<br>Stay confident.</h3><p>Routine care for the website you've worked hard to build.</p><b>Ask about care ↗</b></div></div></div></div>
+ <section class="section section--white" id="plan"><div class="container split"><div><p class="eyebrow">Ongoing peace of mind</p><h2>Less time worrying about your website.</h2><p>Software changes. Plugins need updates. Content gets old. A care plan gives your site regular attention so small maintenance tasks don't keep slipping down the list.</p><ul class="feature-list"><li>WordPress, theme and plugin updates</li><li>Monthly backup and basic security check</li><li>Up to two hours of small content changes</li><li>Reply within two working days</li><li>Clear limits on what's included</li></ul></div><div class="visual-card" aria-hidden="true"><div class="mini-window"><div class="bar"><i></i><i></i><i></i></div><div class="mini-content"><span>MAINTENANCE, MADE SIMPLE</span><h3>All the little<br>things, handled.</h3><p>Regular upkeep with a human to ask when you need help.</p><b>Let's talk ↗</b></div></div></div></div></section>
+ <section class="section"><div class="container"><div class="section-head"><p class="eyebrow">Simple monthly support</p><h2>From R500 per month.</h2><p>We'll confirm the scope and response expectations in writing before anything starts.</p></div><div style="max-width:760px;margin:auto"><div class="price-row"><div><h3>Website care</h3><p>Updates, monthly backup and security check, up to 2 hours of small content changes.</p></div><div class="price">R500+<small>per month</small></div></div></div><p class="microcopy" style="text-align:center">New features, redesigns, new pages, hosting and domain fees are not included. Emergency fixes and work outside the monthly allowance are quoted separately.</p></div></section>
+ <section class="section section--white"><div class="container"><div class="section-head"><p class="eyebrow">A few details</p><h2>Clear expectations matter.</h2></div><div class="faq"><details><summary>Do I need to have a NEARLY-built website?</summary><p>Not necessarily. We'll first check the setup and current condition of your website to make sure the plan is a good fit.</p></details><details><summary>Does website care include hosting?</summary><p>No. Hosting, domain renewals and paid software subscriptions are separate unless your written agreement specifically says otherwise.</p></details><details><summary>Can you add features or redesign my website?</summary><p>Yes, but those are scoped and quoted separately so the monthly plan stays predictable.</p></details></div></div></section>
