@@ -33,6 +33,12 @@ A static, responsive website with an Apple-inspired minimalist direction (withou
 - `dashboard.js` — dashboard data loading and rendering, served as a same-origin script for the Content Security Policy
 - `scripts/google-sheets-webhook.gs` — Google Apps Script endpoint that records leads, exposes dashboard data and maintains the Sheet's follow-up pipeline
 
+## Motion layer
+- `motion-advanced.css` and `motion-advanced.js` are an additive layer on top of `styles.css` and `script.js`: spring-in reveals for cards, 3D card tilt, the eased hero stage tilt, magnetic buttons, price pop on the payment-plan switch, the before/after slider and the ambient wireframe canvas.
+- Everything lively sits behind `prefers-reduced-motion: no-preference`; with reduce motion on, the site's own rules in `styles.css` apply.
+- The hero stage tilt lives only in `motion-advanced.js`. Do not add a second tilt in `script.js`: an inline transform there overrides the CSS variables and the two fight.
+- `_headers` caches `.css` and `.js` for a year as immutable, so bump the `?v=` number on every page whenever either file changes.
+
 ## Before publishing
 1. Confirm prices, timelines, included deliverables, revision limits and care plan terms.
 2. Confirm public contact details.

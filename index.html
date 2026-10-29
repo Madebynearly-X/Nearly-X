@@ -23,9 +23,9 @@
   <link rel="icon" href="/favicon.svg" type="image/svg+xml">
   <link rel="stylesheet" href="styles.css?v=2">
   <link rel="stylesheet" href="selected-concepts.css">
-  <link rel="stylesheet" href="motion-advanced.css?v=4">
-  <script src="script.js?v=2" defer></script>
-  <script src="motion-advanced.js?v=4" defer></script>
+  <link rel="stylesheet" href="motion-advanced.css?v=5">
+  <script src="script.js?v=3" defer></script>
+  <script src="motion-advanced.js?v=5" defer></script>
   <script type="application/ld+json">{"@context":"https://schema.org","@type":"ProfessionalService","name":"NEARLY Studio","url":"https://nearly-x.pages.dev/","email":"madebynearly@gmail.com","telephone":"+27783940421","address":{"@type":"PostalAddress","addressLocality":"Pretoria","addressRegion":"Gauteng","addressCountry":"ZA"},"image":"https://nearly-x.pages.dev/assets/og-card.png","areaServed":["South Africa","Worldwide"],"serviceType":["Landing page design","Business website design","Website maintenance"],"hasOfferCatalog":{"@type":"OfferCatalog","name":"Website services","itemListElement":[{"@type":"Offer","itemOffered":{"@type":"Service","name":"Landing page design"},"priceSpecification":{"@type":"UnitPriceSpecification","priceCurrency":"ZAR","minPrice":2500}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Starter and business website design"},"priceSpecification":{"@type":"UnitPriceSpecification","priceCurrency":"ZAR","minPrice":4500}},{"@type":"Offer","itemOffered":{"@type":"Service","name":"Website care"},"priceSpecification":{"@type":"UnitPriceSpecification","priceCurrency":"ZAR","minPrice":500,"unitText":"month"}}]}}</script>
 </head>
 <body>
@@ -51,7 +51,6 @@
   <main id="main" tabindex="-1">
     <!-- HERO SECTION WITH 3D CANVAS & STAGE -->
     <section class="hero container">
-      <canvas id="hero-3d-ambient" class="hero-3d-canvas" aria-hidden="true"></canvas>
       <p class="eyebrow"><span class="dot"></span> Independent web design · South Africa-based, working worldwide</p>
       <h1>Websites for<br><span class="soft">businesses ready for more.</span></h1>
       <p class="intro">Mobile-first landing pages and business websites that make your services easy to understand and the next step easy to take.</p>
@@ -79,6 +78,9 @@
           </div>
         </div>
       </div>
+
+      <!-- Decorative; last child so styles.css's hero stagger (nth-child) still lines up -->
+      <canvas id="hero-3d-ambient" class="hero-3d-canvas" aria-hidden="true"></canvas>
     </section>
 
     <!-- BEFORE / AFTER COMPARISON SLIDER -->
@@ -105,8 +107,8 @@
               <p class="cmp__sub">Clear offer, immediate trust, and a natural next step.</p>
               <span class="cmp__cta">Tell us about your project</span>
             </div>
-            <div class="cmp__handle" aria-hidden="true"><div class="cmp__knob">&harr;</div></div>
             <input class="cmp__range" type="range" min="0" max="100" value="50" aria-label="Slide to compare a generic template with a focused page" data-compare-range hidden>
+            <div class="cmp__handle" aria-hidden="true"><div class="cmp__knob">&harr;</div></div>
           </div>
           <p class="cmp__note">Drag to compare a noisy template with a focused layout</p>
         </div>

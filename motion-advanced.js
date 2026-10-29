@@ -5,8 +5,8 @@
  *
  * Handles:
  *   1. Bounce on reveal
- *   2. Multi-layer 3D tilt (Desktop pointer & Mobile touch + Gyro)
- *   3. Interactive 3D Hero Stage (multi-layer depth & specular sheen)
+ *   2. 3D tilt on cards (mouse hover, or finger down on touch)
+ *   3. Interactive 3D hero stage (eased tilt, specular sheen, optional gyro)
  *   4. Parallax on hero visuals
  *   5. Magnetic buttons
  *   6. Price pop on plan switch
@@ -20,6 +20,11 @@
   const finePointer = window.matchMedia('(hover: hover) and (pointer: fine)');
 
   /* 1. Bounce on reveal ----------------------------------------------------- */
+  // Cards, price rows and the compare block spring in. Headings, FAQ rows and
+  // the contact form stay on the plain fade from styles.css: text that
+  // overshoots reads as nervous, and a form that bounces is harder to aim at.
+  const BOUNCY = '.tile, .price-row, .cmp, .cta-band, .feature-list li';
+
   if (!reduced.matches && 'MutationObserver' in window && Element.prototype.animate) {
     const bounce =
       getComputedStyle(document.documentElement).getPropertyValue('--bounce').trim() ||
@@ -28,71 +33,76 @@
 
     new MutationObserver((records) => {
       records.forEach(({ target: el }) => {
-        if (played.has(el) || !el.classList.contains('reveal') || !el.classList.contains('is-visible')) return;
+        if (played.has(el) || !el.classList.contains('is-visible') || !el.matches(BOUNCY)) return;
+        if (!el.classList.contains('reveal')) return;
         played.add(el);
         const delay = (parseFloat(getComputedStyle(el).getPropertyValue('--d')) || 0) * 1000;
-        el.animate(
-          [{ transform: 'translateY(56px) scale(0.92)' }, { transform: 'translateY(0) scale(1)' }],
-          { duration: 900, delay, easing: bounce, fill: 'backwards' }
-        );
+        try {
+          el.animate(
+            [{ transform: 'translateY(36px) scale(0.96)' }, { transform: 'translateY(0) scale(1)' }],
+            { duration: 800, delay, easing: bounce, fill: 'backwards' }
+          );
+        } catch (err) {
+          /* Easing not supported: the CSS reveal in styles.css has already run. */
+        }
       });
     }).observe(document.body, { attributes: true, attributeFilter: ['class'], subtree: true });
   }
 
-  /* 2. 3D Tilt on Cards (Desktop Pointer & Mobile Touch) ------------------- */
+  /* 2. 3D tilt on cards ------------------------------------------------------ */
+  // One set of pointer events for mouse and touch. A mouse tilts on hover; a
+  // finger tilts only while it is down. When the browser takes the gesture over
+  // to scroll it fires pointercancel, which resets the card, so scrolling past
+  // a card never leaves it tilted (the old touchmove version did).
   if (!reduced.matches) {
     document.querySelectorAll('.tile').forEach((tile) => {
-      let active = false;
+      let touching = false;
 
-      const onMove = (clientX, clientY) => {
+      const aim = (e) => {
         const r = tile.getBoundingClientRect();
-        const x = (clientX - r.left) / r.width - 0.5;
-        const y = (clientY - r.top) / r.height - 0.5;
+        if (!r.width || !r.height) return;
+        const x = (e.clientX - r.left) / r.width - 0.5;
+        const y = (e.clientY - r.top) / r.height - 0.5;
         tile.style.setProperty('--rx', `${(-y * 8).toFixed(2)}deg`);
         tile.style.setProperty('--ry', `${(x * 8).toFixed(2)}deg`);
       };
 
       const reset = () => {
-        active = false;
+        touching = false;
         tile.classList.remove('is-touch-tilted');
         tile.style.removeProperty('--rx');
         tile.style.removeProperty('--ry');
       };
 
-      // Desktop
-      if (finePointer.matches) {
-        tile.addEventListener('pointermove', (e) => onMove(e.clientX, e.clientY), { passive: true });
-        tile.addEventListener('pointerleave', reset, { passive: true });
-      } else {
-        // Mobile Touch
-        tile.addEventListener(
-          'touchstart',
-          (e) => {
-            active = true;
-            tile.classList.add('is-touch-tilted');
-            const touch = e.touches[0];
-            if (touch) onMove(touch.clientX, touch.clientY);
-          },
-          { passive: true }
-        );
+      tile.addEventListener(
+        'pointerdown',
+        (e) => {
+          if (e.pointerType === 'mouse') return;
+          touching = true;
+          tile.classList.add('is-touch-tilted');
+          aim(e);
+        },
+        { passive: true }
+      );
 
-        tile.addEventListener(
-          'touchmove',
-          (e) => {
-            if (!active) return;
-            const touch = e.touches[0];
-            if (touch) onMove(touch.clientX, touch.clientY);
-          },
-          { passive: true }
-        );
+      tile.addEventListener(
+        'pointermove',
+        (e) => {
+          if (e.pointerType === 'mouse' || touching) aim(e);
+        },
+        { passive: true }
+      );
 
-        tile.addEventListener('touchend', reset, { passive: true });
-        tile.addEventListener('touchcancel', reset, { passive: true });
-      }
+      ['pointerup', 'pointercancel', 'pointerleave'].forEach((type) =>
+        tile.addEventListener(type, reset, { passive: true })
+      );
     });
   }
 
-  /* 3. Interactive 3D Hero Stage (Multi-layer depth & sheen) --------------- */
+  /* 3. Interactive 3D hero stage ---------------------------------------------- */
+  // script.js used to tilt .browser as well, by writing an inline transform that
+  // beat these CSS variables, so the two fought. That call has been removed and
+  // this is now the only tilt on the stage.
   const stage = document.querySelector('.stage');
   const browser = document.querySelector('.browser');
   if (stage && browser && !reduced.matches) {
@@ -101,10 +111,16 @@
     let currentRx = 0;
     let currentRy = 0;
     let rafId = 0;
+    let last = 0;
+    let stageInView = true;
 
-    const animateStage = () => {
-      currentRx += (targetRx - currentRx) * 0.12;
-      currentRy += (targetRy - currentRy) * 0.12;
+    const step = (now) => {
+      // Time-based easing, so 60 Hz and 120 Hz screens feel the same.
+      const dt = Math.min((now - last) / 16.67 || 1, 3);
+      last = now;
+      const k = 1 - Math.pow(0.88, dt);
+      currentRx += (targetRx - currentRx) * k;
+      currentRy += (targetRy - currentRy) * k;
       browser.style.setProperty('--stage-rx', `${currentRx.toFixed(2)}deg`);
       browser.style.setProperty('--stage-ry', `${currentRy.toFixed(2)}deg`);
 
@@ -112,54 +128,56 @@
       browser.style.setProperty('--stage-shine', shine.toFixed(2));
 
       if (Math.abs(targetRx - currentRx) > 0.02 || Math.abs(targetRy - currentRy) > 0.02) {
-        rafId = requestAnimationFrame(animateStage);
+        rafId = requestAnimationFrame(step);
       } else {
         rafId = 0;
       }
     };
 
-    const scheduleStage = () => {
-      if (!rafId) rafId = requestAnimationFrame(animateStage);
+    const schedule = () => {
+      if (rafId) return;
+      last = performance.now();
+      rafId = requestAnimationFrame(step);
     };
 
-    const updateFromCoords = (clientX, clientY) => {
+    const aim = (clientX, clientY) => {
       const r = stage.getBoundingClientRect();
-      const x = (clientX - r.left) / r.width - 0.5;
-      const y = (clientY - r.top) / r.height - 0.5;
-      targetRx = -y * 10;
-      targetRy = x * 12;
-      scheduleStage();
+      if (!r.width || !r.height) return;
+      targetRx = -((clientY - r.top) / r.height - 0.5) * 10;
+      targetRy = ((clientX - r.left) / r.width - 0.5) * 12;
+      schedule();
     };
 
-    stage.addEventListener(
-      'pointermove',
-      (e) => {
-        updateFromCoords(e.clientX, e.clientY);
-      },
-      { passive: true }
-    );
-
+    stage.addEventListener('pointermove', (e) => aim(e.clientX, e.clientY), { passive: true });
     stage.addEventListener(
       'pointerleave',
       () => {
         targetRx = 0;
         targetRy = 0;
-        scheduleStage();
+        schedule();
       },
       { passive: true }
     );
 
-    // Subtle device gyroscope tilt on mobile
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        stageInView = entries[entries.length - 1].isIntersecting;
+      }).observe(stage);
+    }
+
+    // Subtle device gyroscope tilt on phones, only while the stage is on screen.
+    // iOS needs an explicit permission prompt before it sends these events;
+    // without one this simply never fires there.
     if (window.DeviceOrientationEvent && 'ontouchstart' in window) {
       window.addEventListener(
         'deviceorientation',
         (e) => {
-          if (e.beta == null || e.gamma == null) return;
+          if (!stageInView || e.beta == null || e.gamma == null) return;
           const gamma = Math.max(-25, Math.min(25, e.gamma));
           const beta = Math.max(10, Math.min(60, e.beta)) - 35;
           targetRy = (gamma / 25) * 6;
           targetRx = (-beta / 25) * 5;
-          scheduleStage();
+          schedule();
         },
         { passive: true }
       );
@@ -289,26 +307,30 @@
     update();
   });
 
-  /* 8. Ambient 3D Geometric Wireframe Canvas in Hero ----------------------- */
+  /* 8. Ambient 3D wireframe canvas in the hero -------------------------------- */
   const canvas = document.getElementById('hero-3d-ambient');
-  if (canvas && !reduced.matches && canvas.getContext) {
-    const ctx = canvas.getContext('2d');
+  const ctx = canvas && !reduced.matches && canvas.getContext ? canvas.getContext('2d') : null;
+  if (ctx) {
+    const EDGE = 'rgba(0, 102, 204, 0.16)'; // site --blue (#06c) at low alpha
+    const DOT = 'rgba(0, 102, 204, 0.28)';
     let width = 0;
     let height = 0;
-    let animId = 0;
-    let isVisible = true;
+    let rafId = 0;
+    let last = 0;
+    let inView = false;
 
     const resize = () => {
       const r = canvas.getBoundingClientRect();
-      width = r.width || window.innerWidth;
-      height = r.height || 600;
+      if (!r.width || !r.height) return;
+      width = r.width;
+      height = r.height;
       const dpr = Math.min(window.devicePixelRatio || 1, 2);
-      canvas.width = width * dpr;
-      canvas.height = height * dpr;
-      ctx.scale(dpr, dpr);
+      canvas.width = Math.round(width * dpr);
+      canvas.height = Math.round(height * dpr);
+      ctx.setTransform(dpr, 0, 0, dpr, 0, 0);
     };
 
-    // 3D Math primitives: Cube and Octahedron wireframe vertices and edges
+    // Cube and octahedron wireframes
     const makeCube = (size) => {
       const s = size / 2;
       return {
@@ -340,7 +362,7 @@
       };
     };
 
-    // Floating 3D particles in hero space
+    // Positions are fractions of the canvas; spin rates are radians per 60 Hz frame.
     const solids = [
       { geom: makeCube(70), x: -0.32, y: -0.22, z: 200, rx: 0.2, ry: 0.3, rz: 0.1, vx: 0.004, vy: 0.005, vz: 0.003 },
       { geom: makeOctahedron(55), x: 0.36, y: -0.18, z: 240, rx: 0.5, ry: 0.2, rz: 0.4, vx: -0.005, vy: 0.004, vz: 0.002 },
@@ -349,47 +371,51 @@
     ];
 
     const rotatePoint = (p, rx, ry, rz) => {
-      let [x, y, z] = p;
-      // rot X
-      let cos = Math.cos(rx), sin = Math.sin(rx);
-      let y1 = y * cos - z * sin;
-      let z1 = y * sin + z * cos;
-      // rot Y
-      cos = Math.cos(ry); sin = Math.sin(ry);
-      let x2 = x * cos + z1 * sin;
-      let z2 = -x * sin + z1 * cos;
-      // rot Z
-      cos = Math.cos(rz); sin = Math.sin(rz);
-      let x3 = x2 * cos - y1 * sin;
-      let y3 = x2 * sin + y1 * cos;
-      return [x3, y3, z2];
+      const [x, y, z] = p;
+      let cos = Math.cos(rx);
+      let sin = Math.sin(rx);
+      const y1 = y * cos - z * sin;
+      const z1 = y * sin + z * cos;
+      cos = Math.cos(ry);
+      sin = Math.sin(ry);
+      const x2 = x * cos + z1 * sin;
+      const z2 = -x * sin + z1 * cos;
+      cos = Math.cos(rz);
+      sin = Math.sin(rz);
+      return [x2 * cos - y1 * sin, x2 * sin + y1 * cos, z2];
     };
 
-    const render = () => {
-      if (!isVisible) return;
+    const shouldRun = () => inView && !document.hidden && !reduced.matches;
+
+    const draw = (now) => {
+      rafId = 0;
+      if (!shouldRun() || !width) return;
+
+      const dt = Math.min((now - last) / 16.67 || 1, 3);
+      last = now;
       ctx.clearRect(0, 0, width, height);
 
       const fov = 450;
       const cx = width / 2;
       const cy = height * 0.45;
+      const count = width < 600 ? 2 : solids.length; // keep phones calm
 
-      solids.forEach((item) => {
-        item.rx += item.vx;
-        item.ry += item.vy;
-        item.rz += item.vz;
+      for (let n = 0; n < count; n += 1) {
+        const item = solids[n];
+        item.rx += item.vx * dt;
+        item.ry += item.vy * dt;
+        item.rz += item.vz * dt;
 
         const posX = cx + item.x * width;
         const posY = cy + item.y * height;
 
         const proj = item.geom.vertices.map((v) => {
           const r = rotatePoint(v, item.rx, item.ry, item.rz);
-          const z = r[2] + item.z;
-          const scale = fov / (fov + z);
+          const scale = fov / (fov + r[2] + item.z);
           return [posX + r[0] * scale, posY + r[1] * scale, scale];
         });
 
-        // Draw edges
-        ctx.strokeStyle = 'rgba(0, 102, 204, 0.16)';
+        ctx.strokeStyle = EDGE;
         ctx.lineWidth = 1.2;
         ctx.beginPath();
         item.geom.edges.forEach(([i, j]) => {
@@ -398,37 +424,62 @@
         });
         ctx.stroke();
 
-        // Draw vertices
-        ctx.fillStyle = 'rgba(0, 102, 204, 0.28)';
+        ctx.fillStyle = DOT;
         proj.forEach(([px, py, scale]) => {
           ctx.beginPath();
           ctx.arc(px, py, 2 * scale, 0, Math.PI * 2);
           ctx.fill();
         });
-      });
+      }
 
-      animId = requestAnimationFrame(render);
+      rafId = requestAnimationFrame(draw);
+    };
+
+    // One place decides whether the loop should be running: hero on screen,
+    // tab visible, motion allowed. Anything that changes those calls this.
+    const sync = () => {
+      if (shouldRun()) {
+        if (!rafId) {
+          last = performance.now();
+          rafId = requestAnimationFrame(draw);
+        }
+      } else if (rafId) {
+        cancelAnimationFrame(rafId);
+        rafId = 0;
+      }
+    };
+
+    const onResize = () => {
+      resize();
+      sync(); // restarts the loop if it stopped because the canvas had no size yet
     };
 
     resize();
-    window.addEventListener('resize', resize, { passive: true });
 
-    // Pause when hero is out of view to save battery and performance
-    if ('IntersectionObserver' in window) {
-      const observer = new IntersectionObserver((entries) => {
-        entries.forEach((entry) => {
-          isVisible = entry.isIntersecting;
-          if (isVisible && !animId) {
-            animId = requestAnimationFrame(render);
-          } else if (!isVisible && animId) {
-            cancelAnimationFrame(animId);
-            animId = 0;
-          }
-        });
-      });
-      observer.observe(canvas);
+    if ('ResizeObserver' in window) {
+      new ResizeObserver(onResize).observe(canvas);
     } else {
-      animId = requestAnimationFrame(render);
+      window.addEventListener('resize', onResize, { passive: true });
     }
+
+    if ('IntersectionObserver' in window) {
+      new IntersectionObserver((entries) => {
+        inView = entries[entries.length - 1].isIntersecting;
+        sync();
+      }).observe(canvas);
+    } else {
+      inView = true;
+    }
+
+    document.addEventListener('visibilitychange', sync);
+
+    // Someone turns on "reduce motion" while the page is open: stop and clear.
+    const onReducedChange = () => {
+      if (reduced.matches) ctx.clearRect(0, 0, canvas.width, canvas.height);
+      sync();
+    };
+    if (reduced.addEventListener) reduced.addEventListener('change', onReducedChange);
+
+    sync();
   }
 })();
