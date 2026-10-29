@@ -354,3 +354,90 @@
   font-size: 12px;
   color: var(--muted);
 }
+
+
+/* ---- 3D Stage & Ambient Canvas -------------------------------------------- */
+.hero {
+  position: relative;
+  overflow: visible;
+}
+
+.hero-3d-canvas {
+  position: absolute;
+  inset: -10% -5% 0 -5%;
+  width: 110%;
+  height: 110%;
+  pointer-events: none;
+  z-index: -1;
+  opacity: 0.85;
+}
+
+.stage {
+  perspective: 1400px;
+  transform-style: preserve-3d;
+}
+
+.browser {
+  transform-style: preserve-3d;
+  transform: perspective(1400px) rotateX(var(--stage-rx, 0deg)) rotateY(var(--stage-ry, 0deg));
+  transition: transform 380ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 380ms ease;
+  position: relative;
+}
+
+.browser::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  border-radius: inherit;
+  pointer-events: none;
+  opacity: var(--stage-shine, 0);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.45) 0%, transparent 65%);
+  transition: opacity 0.3s ease;
+  z-index: 5;
+}
+
+.demo-site {
+  transform-style: preserve-3d;
+}
+
+.demo-copy {
+  transform: translateZ(28px);
+  transition: transform 380ms cubic-bezier(0.2, 0.8, 0.2, 1);
+}
+
+.demo-product {
+  transform: translateZ(48px);
+  box-shadow: 0 24px 50px rgba(97, 123, 154, 0.35);
+  transition: transform 380ms cubic-bezier(0.2, 0.8, 0.2, 1), box-shadow 380ms ease;
+}
+
+/* 3D Depth on cards for desktop and mobile touch */
+.tile {
+  transform-style: preserve-3d;
+  will-change: transform;
+}
+
+.tile > * {
+  transform: translateZ(0);
+  transition: transform 300ms ease;
+}
+
+.tile:hover > h3,
+.tile.is-touch-tilted > h3 {
+  transform: translateZ(16px);
+}
+
+.tile:hover > .number,
+.tile.is-touch-tilted > .number {
+  transform: translateZ(10px);
+}
+
+.tile:hover > a,
+.tile.is-touch-tilted > a {
+  transform: translateZ(20px);
+}
+
+.tile.is-touch-tilted {
+  transform: perspective(900px) rotateX(var(--rx, 0deg)) rotateY(var(--ry, 0deg));
+  box-shadow: 0 20px 48px rgba(0, 0, 0, 0.1);
+}
