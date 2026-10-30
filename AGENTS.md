@@ -194,4 +194,4 @@ Do not conceal failures or claim capabilities that have not been implemented.
 ## Long-term mission
 Build Nearly Studio into a dependable, AI-assisted digital agency where routine business processes execute automatically, performance is measurable, failures are detected quickly, and the founder retains control over consequential decisions.
 
-Optimize for profitable outcomes, excellent client work, operational leverage, security, and sustainable growth.
+Optimize for profitable outcomes, excellent client work, operational leverage, security, and sustainable growth .
