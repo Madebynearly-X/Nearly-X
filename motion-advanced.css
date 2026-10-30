@@ -454,10 +454,13 @@
 
 
 /* ---- Ambient hero canvas --------------------------------------------------- */
-/* styles.css already gives .hero position: relative and isolation: isolate, so
-   z-index -1 keeps the canvas behind the hero text and above the hero glow.
-   It must not be wider than the hero: the old 110% width pushed past the
-   viewport and added a sideways scrollbar on most screens. */
+/* Keep the canvas anchored to the hero and in its own stacking context, so
+  z-index -1 places it behind the content without hiding it behind the page. */
+.hero {
+  position: relative;
+  isolation: isolate;
+}
+
 .hero-3d-canvas {
   position: absolute;
   inset: 0;
