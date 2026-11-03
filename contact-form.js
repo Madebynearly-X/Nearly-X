@@ -327,6 +327,7 @@
   };
 
   const showError = (message) => {
+    removeContactFallback();
     if (summary && list) {
       list.replaceChildren();
       const item = document.createElement("li");
@@ -336,6 +337,74 @@
       summary.focus();
     }
     if (live) live.textContent = message;
+  };
+
+  // Keep the visitor's enquiry available through their own mail or WhatsApp app if delivery fails.
+  const contactEmail = "madebynearly@gmail.com";
+  const contactWhatsAppUrl = "https://wa.me/27783940421";
+  let contactFallbackNode = null;
+
+  const removeContactFallback = () => {
+    if (!contactFallbackNode) return;
+    try {
+      contactFallbackNode.remove();
+    } catch {
+      // Best effort: a stale fallback link is harmless.
+    }
+    contactFallbackNode = null;
+  };
+
+  const buildEnquiryText = (formData, maxEncodedLength) => {
+    const read = (name) => {
+      const value = formData.get(name);
+      return typeof value === "string" ? value.trim() : "";
+    };
+    const phone = read("phone");
+    const lines = [
+      ["Name", read("name")],
+      ["Email", read("email")],
+      ["Phone / WhatsApp", phone ? `${read("country_code")} ${phone}`.trim() : ""],
+      ["Business", read("business")],
+      ["Service", read("package")],
+    ].filter(([, value]) => value).map(([label, value]) => `${label}: ${value}`);
+    const compose = (details) => [...lines, "", "Project details:", details].join("\n");
+    const shortenedNote = " … [shortened - please paste the rest of your message]";
+    let details = read("details");
+    let text = compose(details);
+    while (encodeURIComponent(text).length > maxEncodedLength && details.length > 100) {
+      details = details.slice(0, Math.floor(details.length * 0.8));
+      text = compose(`${details}${shortenedNote}`);
+    }
+    return text;
+  };
+
+  const showContactFallback = (formData) => {
+    removeContactFallback();
+    if (!summary || typeof summary.append !== "function") return;
+    try {
+      const text = buildEnquiryText(formData, 1800);
+      const wrapper = document.createElement("p");
+      wrapper.className = "form-fallback";
+      const email = document.createElement("a");
+      email.href = `mailto:${contactEmail}?subject=${encodeURIComponent("Website enquiry")}&body=${encodeURIComponent(text)}`;
+      email.textContent = "email us this enquiry";
+      const whatsapp = document.createElement("a");
+      whatsapp.href = `${contactWhatsAppUrl}?text=${encodeURIComponent(text)}`;
+      whatsapp.textContent = "message us on WhatsApp";
+      whatsapp.target = "_blank";
+      whatsapp.rel = "noopener";
+      wrapper.append(
+        document.createTextNode("Your details are still in the form. You can also "),
+        email,
+        document.createTextNode(" or "),
+        whatsapp,
+        document.createTextNode(" instead."),
+      );
+      summary.append(wrapper);
+      contactFallbackNode = wrapper;
+    } catch {
+      reportInitializationFailure("Contact fallback");
+    }
   };
 
   try {
@@ -367,6 +436,7 @@
         return;
       }
 
+      removeContactFallback();
       if (summary && list) {
         list.replaceChildren();
         summary.hidden = true;
@@ -389,7 +459,9 @@
         try {
           result = await response.json();
         } catch {
-          throw new Error("The server returned an unreadable response. We couldn't confirm delivery; please try again or email madebynearly@gmail.com.");
+          const unreadable = new Error("The server returned an unreadable response. We couldn't confirm delivery; please try again or email madebynearly@gmail.com.");
+          unreadable.offerContactFallback = response.status >= 500;
+          throw unreadable;
         }
 
         if (!response.ok || !result || typeof result !== "object" || result.success !== true) {
@@ -397,7 +469,9 @@
           const message = code === "configuration_missing"
             ? "The enquiry form is not configured yet. Please email madebynearly@gmail.com directly."
             : result?.message || "The server couldn't confirm your enquiry. Please try again or email madebynearly@gmail.com.";
-          throw new Error(message);
+          const failure = new Error(message);
+          failure.offerContactFallback = response.status === 502 || response.status === 503;
+          throw failure;
         }
 
         form.reset();
@@ -421,6 +495,7 @@
           ? error.message
           : "We couldn't confirm your enquiry was sent. Please try again or email madebynearly@gmail.com.";
         showError(message);
+        if (error && error.offerContactFallback) showContactFallback(formData);
       } finally {
         isSubmitting = false;
         submit.disabled = false;
