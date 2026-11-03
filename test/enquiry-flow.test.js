@@ -170,7 +170,7 @@ async function createContactFormHarness(options = {}) {
   const logs = [];
   const packageField = { value: options.packageValue || "" };
   const submit = { textContent: "Send enquiry", disabled: true };
-  const summary = { hidden: true, focus() {} };
+  const summary = Object.assign(createMockElement("div", []), { hidden: true });
   const list = {
     replaceChildren() { entries.length = 0; },
     append(item) { entries.push(item.textContent); },
@@ -271,7 +271,14 @@ async function createContactFormHarness(options = {}) {
     querySelector() { return form; },
     createElement(tagName) {
       operations.push("dom-create");
-      return createMockElement(tagName, operations);
+      const element = createMockElement(tagName, operations);
+      element.remove = function remove() {
+        const siblings = this.parentNode?.children;
+        const index = siblings ? siblings.indexOf(this) : -1;
+        if (index >= 0) siblings.splice(index, 1);
+        this.parentNode = null;
+      };
+      return element;
     },
     createTextNode(text) { return { textContent: text, parentNode: null }; },
     head: { appendChild(node) { injectedScripts.push(node); } },
@@ -1030,7 +1037,7 @@ testCases.push(["static source check: enquiry form retains its dedicated JSON ha
 
 testCases.push(["static source check: contact page defers the shared script before the enquiry handler", async () => {
   const markup = await readFile(join(projectRoot, "contact.html"), "utf8");
-  assert.match(markup, /<script src="script\.js\?v=7" defer><\/script>[\s\S]*?<script src="contact-form\.js\?v=8" defer><\/script>/);
+  assert.match(markup, /<script src="script\.js\?v=7" defer><\/script>[\s\S]*?<script src="contact-form\.js\?v=9" defer><\/script>/);
   assert.match(markup, /<p class="field__error" data-turnstile-status role="status" aria-live="polite" hidden><\/p>/);
   assert.match(markup, /<div class="cf-turnstile"[^>]+id="enquiry-turnstile"/);
 }]);
@@ -1047,17 +1054,17 @@ testCases.push(["all active pages use the current immutable styles and script as
   const markup = pages.join("\n");
   assert.doesNotMatch(markup, /styles\.css\?v=4/);
   assert.doesNotMatch(markup, /script\.js\?v=(?:[0-6])(?:["&])/);
-  assert.doesNotMatch(markup, /contact-form\.js\?v=(?:[0-7])(?:["&])/);
+  assert.doesNotMatch(markup, /contact-form\.js\?v=(?:[0-8])(?:["&])/);
   assert.match(markup, /styles\.css\?v=5/);
   assert.match(markup, /script\.js\?v=7/);
-  assert.match(markup, /contact-form\.js\?v=8/);
+  assert.match(markup, /contact-form\.js\?v=9/);
   for (const page of htmlFiles) {
     const pageMarkup = await readFile(join(projectRoot, page), "utf8");
     for (const match of pageMarkup.matchAll(/(?:\/?)script\.js\?v=(\d+)/g)) {
       assert.equal(match[1], "7", `${page} uses an outdated script.js version`);
     }
     for (const match of pageMarkup.matchAll(/(?:\/?)contact-form\.js\?v=(\d+)/g)) {
-      assert.equal(match[1], "8", `${page} uses an outdated contact-form.js version`);
+      assert.equal(match[1], "9", `${page} uses an outdated contact-form.js version`);
     }
   }
 }]);
@@ -1179,6 +1186,92 @@ testCases.push(["Turnstile direct-render fallback still reports a widget that ca
   assert.ok(harness.logs.some((message) => message.startsWith("[NEARLY Enquiry] Turnstile widget rendering failed.") && message.includes("Mock rendering failure.")));
   await harness.clickSubmit();
   assert.equal(harness.fetchCalls, 0);
+}]);
+
+const deliveryFailureBody = {
+  success: false,
+  message: "We couldn't send your enquiry just now. Please try again or email us directly.",
+  code: "provider_failed",
+};
+const fallbackLinks = (harness) => {
+  const wrapper = harness.summary.children.find((child) => child.className === "form-fallback");
+  return wrapper ? wrapper.children.filter((child) => child.tagName === "a") : [];
+};
+
+testCases.push(["server delivery failures offer prefilled email and WhatsApp links without the security token", async () => {
+  for (const status of [502, 503]) {
+    const harness = await createContactFormHarness({ fetch: async () => mockResponse(deliveryFailureBody, status) });
+    await harness.clickSubmit();
+    assert.match(harness.live.textContent, /couldn't send your enquiry/i);
+
+    const links = fallbackLinks(harness);
+    assert.equal(links.length, 2, `status ${status} should offer two fallback links`);
+    const mail = links.find((link) => link.href.startsWith("mailto:madebynearly@gmail.com?"));
+    assert.ok(mail);
+    const mailUrl = new URL(mail.href);
+    const mailBody = mailUrl.searchParams.get("body");
+    assert.equal(mailUrl.searchParams.get("subject"), "Website enquiry");
+    assert.match(mailBody, /Name: Test/);
+    assert.match(mailBody, /Email: test@example\.test/);
+    assert.match(mailBody, /Business: Example business/);
+    assert.match(mailBody, /I would like to discuss a new website\./);
+    assert.doesNotMatch(mailBody, /mock-turnstile-token|_honey|cf-turnstile/);
+
+    const whatsapp = links.find((link) => link.href.startsWith("https://wa.me/27783940421?text="));
+    assert.ok(whatsapp);
+    assert.equal(whatsapp.target, "_blank");
+    assert.equal(whatsapp.rel, "noopener");
+    assert.match(new URL(whatsapp.href).searchParams.get("text"), /Name: Test/);
+  }
+}]);
+
+testCases.push(["an unreadable server error response also offers the contact fallback", async () => {
+  const harness = await createContactFormHarness({
+    fetch: async () => new Response("<html>Bad gateway</html>", { status: 500, headers: { "Content-Type": "text/html" } }),
+  });
+  await harness.clickSubmit();
+  assert.equal(fallbackLinks(harness).length, 2);
+}]);
+
+testCases.push(["client-side and verification errors do not offer the delivery fallback", async () => {
+  for (const [status, code] of [[400, "validation_failed"], [403, "verification_failed"], [409, "duplicate_submission"], [429, "rate_limited"]]) {
+    const harness = await createContactFormHarness({
+      fetch: async () => mockResponse({ success: false, message: "Please check the form and try again.", code }, status),
+    });
+    await harness.clickSubmit();
+    assert.equal(fallbackLinks(harness).length, 0, `status ${status} must not offer the fallback`);
+    assert.match(harness.live.textContent, /check the form/i);
+  }
+}]);
+
+testCases.push(["the contact fallback is cleared on retry and long messages are shortened to fit", async () => {
+  let call = 0;
+  const longDetails = "I would like a website for my business. ".repeat(125);
+  const harness = await createContactFormHarness({
+    formEntries: {
+      name: "Test", email: "test@example.test", phone: "", business: "", package: "business-website",
+      details: longDetails, source: "website", country_code: "", _honey: "",
+      "cf-turnstile-response": "mock-turnstile-token",
+    },
+    fetch: async () => {
+      call += 1;
+      return call === 1 ? mockResponse(deliveryFailureBody, 502) : mockResponse({ success: true });
+    },
+  });
+  await harness.clickSubmit();
+  const links = fallbackLinks(harness);
+  assert.equal(links.length, 2);
+  for (const link of links) {
+    const encodedMessage = link.href.startsWith("mailto:")
+      ? new URL(link.href).search.match(/body=(.*)$/)[1]
+      : link.href.split("text=")[1];
+    assert.ok(encodedMessage.length <= 1800, `fallback message must stay within the URL limit (${encodedMessage.length})`);
+    assert.match(decodeURIComponent(encodedMessage), /shortened - please paste the rest/);
+  }
+
+  await harness.clickSubmit();
+  assert.equal(harness.fetchCalls, 2);
+  assert.equal(fallbackLinks(harness).length, 0);
 }]);
 
 test("enquiry flow", async (t) => {
